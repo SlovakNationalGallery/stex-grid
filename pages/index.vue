@@ -1,5 +1,5 @@
 <template>
-  <Navbar ref="navbar" class="border-t-3">
+  <Navbar ref="navbar" class="fixed top-0 border-t-3">
     <template v-slot:icon class="w-20">
       <div class="flex h-full w-20 items-center justify-center bg-black">
         <Logo class="h-12 w-12" />
@@ -13,12 +13,34 @@
       </div>
     </template>
   </Navbar>
-  <div class="mx-auto max-w-screen-2xl px-12 pt-20">
-    //TODO: 
+  <div class="mt-20">
+    <div
+      :style="{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_DIMENSION})`,
+        gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_DIMENSION})`,
+      }"
+    >
+      <div
+        v-for="cell in mockData"
+        :key="cell.id"
+        class="row-start-10 col-span-1 col-start-11 row-span-1 bg-blue-500"
+        :style="{
+          background: 'blue',
+          gridColumnStart: cell.x,
+          gridRowStart: cell.y,
+          gridColumnEnd: cell.x + cell.spanX,
+          gridRowEnd: cell.y + cell.spanY,
+        }"
+      ></div>
+    </div>
   </div>
 </template>
 <script setup>
 import Logo from "~/assets/img/logo.svg?component";
-import { ref } from "vue";
 import { mockData } from "../data";
+
+const SQUARE_DIMENSION = "104px";
+const NUM_OF_COLUMNS = 30;
+const NUM_OF_ROWS = 7;
 </script>
