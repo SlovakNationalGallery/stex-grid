@@ -24,7 +24,7 @@
       <div
         v-for="cell in mockData"
         :key="cell.id"
-        class="row-start-10 col-span-1 col-start-11 row-span-1 bg-blue-500"
+        class="bg-blue-500"
         :style="{
           background: 'blue',
           gridColumnStart: cell.x,
