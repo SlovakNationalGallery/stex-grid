@@ -13,7 +13,7 @@
       </div>
     </template>
   </Navbar>
-  <div class="relative mt-20">
+  <div class="mt-20 w-screen overflow-x-scroll">
     <div
       :style="{
         display: 'grid',
@@ -142,7 +142,12 @@
 <script setup>
 import { ref, reactive } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
-import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION, artworkIds } from "../consts";
+import {
+  NUM_OF_COLUMNS,
+  NUM_OF_ROWS,
+  SQUARE_DIMENSION,
+  artworkIds,
+} from "../consts";
 
 const openedPopover = ref(null);
 
@@ -185,5 +190,4 @@ const clearTile = ({ x, y }) => {
 };
 
 const artworks = ref([]);
-
 </script>

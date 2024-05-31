@@ -1,17 +1,19 @@
 <template>
-  <div class="flex">
+  <div class="flex border-l-2 border-t-2 border-l-black border-t-black bg-white">
     <div
-      class="w-full rounded-tl-xl border-l-2 border-t-2 border-l-black border-t-black bg-white"
+      class="w-full"
     >
       <div
         class="pointer-events-auto flex items-center justify-between gap-4 border-b-2 border-black p-6 pb-5 pt-2"
       >
         <slot name="header" />
-        <button @click="$emit('close')" class="absolute top-6 right-6">
+        <button @click="$emit('close')">
           <Close class="h-10 w-10" />
         </button>
       </div>
+      <div class="p-6">
         <slot name="body" />
+      </div>
     </div>
   </div>
 </template>
