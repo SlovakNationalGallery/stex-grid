@@ -13,7 +13,11 @@
       </div>
     </template>
   </Navbar>
-  <div class="mt-20">
+  <div
+    class="mt-20 w-screen overflow-x-scroll"
+    ref="grid"
+    @touchmove="closePopover"
+  >
     <div
       :style="{
         display: 'grid',
@@ -45,7 +49,40 @@
           ></div>
         </div>
       </template>
-
+      <!-- tiny legs under artworks -->
+      <div
+        v-for="artwork in mockArtworks"
+        :key="artwork.id + ' legs'"
+        class="flex flex-col"
+        :style="{
+          gridColumnStart: artwork.x,
+          gridRowStart: artwork.y,
+          gridColumnEnd: artwork.x + artwork.spanX,
+          gridRowEnd: artwork.y + artwork.spanY,
+        }"
+      >
+        <div
+          class="flex"
+          v-for="y in Array.from({ length: artwork.spanY + 1 })"
+        >
+          <div v-for="x in Array.from({ length: artwork.spanX + 1 })">
+            <svg
+              viewBox="0 0 100 100"
+              xmlns="http://www.w3.org/2000/svg"
+              :style="{
+                width: SQUARE_DIMENSION,
+                height: SQUARE_DIMENSION,
+                left: SQUARE_DIMENSION * x,
+                top: SQUARE_DIMENSION * y,
+              }"
+              class="stroke-black stroke-2"
+            >
+              <line x1="0" y1="0" x2="27" y2="27" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <!-- artworks -->
       <button
         v-for="artwork in mockArtworks"
         class="z-10 outline outline-2 outline-black"
@@ -56,7 +93,7 @@
           gridColumnEnd: artwork.x + artwork.spanX,
           gridRowEnd: artwork.y + artwork.spanY,
         }"
-        @click="openGroupPopover(artwork)"
+        @click="(e) => openGroupPopover(e, artwork)"
       >
         <img
           class="z-20 h-full w-full object-cover"
@@ -65,28 +102,37 @@
       </button>
     </div>
   </div>
-  <div class="fixed inset-x-0 inset-y-0 z-10 bg-black/50" v-if="openedPopover">
-    <Popover
-      class="absolute bottom-0 right-0 h-[95%] w-1/3"
-      @close="closePopover"
-    >
-      <template v-slot:header>
-        <div class="flex flex-col">
-          <span>{{ openedPopover.artworks.length }} </span>
-          <span>{{ openedPopover.title }}</span>
-        </div>
-      </template>
-      <template v-slot:body> HERE GOES BODY </template>
-    </Popover>
-  </div>
+  <Popover
+    v-if="openedPopover"
+    class="absolute bottom-0 right-0 z-20 h-[95%] w-1/3"
+    @close="closePopover"
+  >
+    <template v-slot:header>
+      <div class="flex flex-col">
+        <span>{{ openedPopover.artworks.length }} </span>
+        <span>{{ openedPopover.title }}</span>
+      </div>
+    </template>
+    <template v-slot:body> HERE GOES BODY </template>
+  </Popover>
 </template>
 <script setup>
 import Logo from "~/assets/img/logo.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
+const grid = ref();
 
-const openGroupPopover = (artwork) => {
+const openGroupPopover = (e, artwork) => {
+  if (e.target instanceof Element) {
+    const { offsetLeft, offsetWidth } = e.target;
+    grid.value.scrollTo({
+      //TODO: better offset calculation
+      left: Math.max(offsetLeft - grid.value.offsetWidth / 4, 0),
+      behavior: "smooth",
+    });
+  }
+
   const { group: groupId } = artwork;
   const group = mockGroups.filter((group) => group.id === groupId)[0];
 

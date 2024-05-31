@@ -88,6 +88,6 @@ export const artworkIds = [
 
 export const NUM_OF_ROWS = 7;
 export const SQUARE_DIMENSION = `calc((100vh - 80px) / ${NUM_OF_ROWS})`;
-export const NUM_OF_COLUMNS = 30;
+export const NUM_OF_COLUMNS = 150;
 
   
