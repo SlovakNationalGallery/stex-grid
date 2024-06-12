@@ -14,9 +14,11 @@
     </template>
   </Navbar>
   <div
-    class="mt-20 w-screen overflow-x-scroll no-scrollbar"
+    class="no-scrollbar mt-20 w-screen overflow-x-scroll"
     ref="grid"
-    @touchmove="closePopover"
+    @touchmove="onTouchMove"
+    @touchstart="onTouchstart"
+    @touchend="onTouchend"
   >
     <div
       :style="{
@@ -134,6 +136,7 @@
   </Popover>
 </template>
 <script setup>
+import { watchEffect } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
@@ -141,6 +144,33 @@ const openedPopover = ref(null);
 const openedZoomId = ref(null);
 
 const grid = ref();
+const gridScrollPosition = useGridScrollPosition();
+const isTouchingGrid = ref(false);
+
+watchEffect(() => {
+  if (!grid.value || isTouchingGrid.value) return;
+  const { scrollWidth, offsetWidth } = grid.value;
+  grid.value.scrollTo({
+    //TODO: better offset calculation
+    left: ((scrollWidth - offsetWidth) / 100) * gridScrollPosition.value,
+    behavior: "smooth",
+  });
+});
+
+const onTouchMove = () => {
+  closePopover();
+  if (!grid.value) return;
+  const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
+  gridScrollPosition.value = (scrollLeft / (scrollWidth - offsetWidth)) * 100;
+};
+
+const onTouchend = () => {
+  isTouchingGrid.value = false;
+};
+
+const onTouchstart = () => {
+  isTouchingGrid.value = true;
+};
 
 const openZoomViewer = (e, artwork) => {
   openedZoomId.value = artwork.id;
