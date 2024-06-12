@@ -1,17 +1,17 @@
 <template>
   <div class="flex border-l-2 border-t-2 border-l-black border-t-black bg-white">
     <div
-      class="w-full"
+      class="w-full flex flex-col"
     >
       <div
-        class="pointer-events-auto flex items-center justify-between gap-4 border-b-2 border-black p-6 pb-5 pt-2"
+        class="flex items-center justify-between gap-4 border-b-2 border-black p-6 pb-5 pt-2"
       >
         <slot name="header" />
         <button @click="$emit('close')">
           <Close class="h-10 w-10" />
         </button>
       </div>
-      <div class="p-6">
+      <div class="overflow-y-scroll">
         <slot name="body" />
       </div>
     </div>

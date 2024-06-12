@@ -118,7 +118,7 @@
         </template>
         <template v-slot:body>
           <div
-            class="pointer-events-auto flex h-full w-full flex-col items-center justify-center overflow-auto p-6"
+            class="h-full w-full overflow-auto p-6"
           >
             <div
               v-for="id in artworkIds"
