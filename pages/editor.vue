@@ -13,7 +13,7 @@
       </div>
     </template>
   </Navbar>
-  <div class="mt-20 w-screen overflow-x-scroll">
+  <div class="mt-20 w-screen overflow-x-scroll no-scrollbar">
     <div
       :style="{
         display: 'grid',

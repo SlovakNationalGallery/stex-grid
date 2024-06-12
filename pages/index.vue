@@ -14,7 +14,7 @@
     </template>
   </Navbar>
   <div
-    class="mt-20 w-screen overflow-x-scroll"
+    class="mt-20 w-screen overflow-x-scroll no-scrollbar"
     ref="grid"
     @touchmove="closePopover"
   >
