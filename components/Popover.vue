@@ -1,8 +1,8 @@
 <template>
-  <div class="flex border-l-2 border-t-2 border-l-black border-t-black bg-white">
-    <div
-      class="w-full"
-    >
+  <div
+    class="flex border-l-2 border-t-2 border-l-black border-t-black bg-white"
+  >
+    <div class="flex h-full w-full flex-col">
       <div
         class="pointer-events-auto flex items-center justify-between gap-4 border-b-2 border-black p-6 pb-5 pt-2"
       >
@@ -11,7 +11,7 @@
           <Close class="h-10 w-10" />
         </button>
       </div>
-      <div class="p-6">
+      <div class="max-h-full overflow-auto p-6">
         <slot name="body" />
       </div>
     </div>

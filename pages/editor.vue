@@ -13,7 +13,7 @@
       </div>
     </template>
   </Navbar>
-  <div class="mt-20 w-screen overflow-x-scroll no-scrollbar">
+  <div class="no-scrollbar mt-20 w-screen overflow-x-scroll">
     <div
       :style="{
         display: 'grid',
@@ -48,8 +48,8 @@
         :style="{
           gridColumnStart: artwork.x + 1,
           gridRowStart: artwork.y + 1,
-          gridColumnEnd: artwork.x + artwork.spanX + 1,
-          gridRowEnd: artwork.y + artwork.spanY + 1,
+          gridColumnEnd: artwork.x + artwork.span_x + 1,
+          gridRowEnd: artwork.y + artwork.span_y + 1,
         }"
         @click="() => openArtwork(artwork)"
       >
@@ -71,25 +71,25 @@
           <div class="flex flex-col items-center justify-center">
             🕸️ {{ openedPopover }}
             <div class="flex gap-2">
-              <label for="spanX">SpanX</label>
+              <label for="span_x">span_x</label>
               <input
                 type="number"
                 class="border"
                 min="1"
                 max="9"
-                v-model="selectedItem.spanX"
-                id="spanX"
+                v-model="selectedItem.span_x"
+                id="span_x"
               />
             </div>
             <div class="flex gap-2">
-              <label for="spanY">SpanY</label>
+              <label for="span_y">span_y</label>
               <input
                 min="1"
                 max="9"
                 type="number"
                 class="border"
-                v-model="selectedItem.spanY"
-                id="spanY"
+                v-model="selectedItem.span_y"
+                id="span_y"
               />
             </div>
             <div class="flex gap-2">
@@ -118,21 +118,17 @@
         </template>
         <template v-slot:body>
           <div
-            class="pointer-events-auto flex h-full w-full flex-col items-center justify-center overflow-auto p-6"
+            v-for="id in artworkIds"
+            :key="id"
+            class="flex w-full justify-between"
           >
-            <div
-              v-for="id in artworkIds"
-              :key="id"
-              class="flex w-full justify-between"
-            >
-              <button class="h-12" @click="selectedItem.id = id">
-                {{ id }}
-              </button>
-              <img
-                class="h-12 w-12"
-                :src="`https://www.webumenia.sk/dielo/nahlad/${id}/600`"
-              />
-            </div>
+            <button class="h-12" @click="selectedItem.id = id">
+              {{ id }}
+            </button>
+            <img
+              class="h-12 w-12"
+              :src="`https://www.webumenia.sk/dielo/nahlad/${id}/600`"
+            />
           </div>
         </template>
       </Popover>
@@ -142,19 +138,14 @@
 <script setup>
 import { ref, reactive } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
-import {
-  NUM_OF_COLUMNS,
-  NUM_OF_ROWS,
-  SQUARE_DIMENSION,
-  artworkIds,
-} from "../consts";
+import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
 
 const EMPTY_ITEM = {
   id: null,
-  spanX: 1,
-  spanY: 1,
+  span_x: 1,
+  span_y: 1,
 };
 
 const selectedItem = reactive({
@@ -162,9 +153,9 @@ const selectedItem = reactive({
 });
 
 const openArtwork = (artwork) => {
-  const { id, spanX, spanY, x, y } = artwork;
+  const { id, span_x, span_y, x, y } = artwork;
   openedPopover.value = { x, y };
-  selectedItem.value = { id, spanX, spanY };
+  selectedItem.value = { id, span_x, span_y };
 };
 
 const closePopover = () => {
@@ -172,22 +163,58 @@ const closePopover = () => {
   openedPopover.value = null;
 };
 
-const addTile = ({ x, y }) => {
+const addTile = async ({ x, y }) => {
   artworks.value = artworks.value.filter(
     (item) => item.x !== x || item.y !== y,
   );
+  await useFetch(`${apiUrl}/items/${selectedItem.id}`, {
+    method: "put",
+    params: {
+      x,
+      y,
+      span_x: selectedItem.span_x,
+      span_y: selectedItem.span_y,
+    },
+  });
   artworks.value.push({ x, y, ...selectedItem });
   openedPopover.value = null;
   selectedItem.value = EMPTY_ITEM;
 };
 
-const clearTile = ({ x, y }) => {
+const clearTile = async ({ x, y }) => {
+  const selectedItem = artworks.value.find(
+    (item) => item.x === x && item.y === y,
+  );
+  if (!selectedItem) return;
+
   artworks.value = artworks.value.filter(
     (item) => item.x !== x || item.y !== y,
   );
+
+  await useFetch(`${apiUrl}/items/${selectedItem.id}`, {
+    method: "put",
+    params: {
+      x: null,
+      y: null,
+      span_x: null,
+      span_y: null,
+    },
+  });
   openedPopover.value = null;
   selectedItem.value = EMPTY_ITEM;
 };
 
-const artworks = ref([]);
+const config = useRuntimeConfig();
+const apiUrl = config.public.apiUrl;
+const { data } = await useFetch(`${apiUrl}/items`);
+
+const artworksData = computed(() => data.value.data);
+const artworkIds = computed(() => artworksData.value.map((item) => item.id));
+const artworkTiles = computed(() =>
+  artworksData.value.filter(
+    (item) => item.span_x && item.span_y && item.x !== null && item.y !== null,
+  ),
+);
+
+const artworks = ref([...artworkTiles.value]);
 </script>
