@@ -3,6 +3,7 @@
     <VueSlider
       :min="0"
       :max="100"
+      @change="$emit('touch')"
       v-model="gridScrollPosition"
       :step="0.0001"
       :process="false"

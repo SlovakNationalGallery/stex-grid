@@ -6,11 +6,7 @@
       <slot name="icon" />
       <slot name="content" />
     </div>
-    <div class="flex w-full items-center gap-4">
-      <span class="bg-blue-ribbon-600/20 text-blue-ribbon-600 py-1 px-1.5 rounded text-sm">Vchod</span>
-      <GridSlider />
-      <span class="bg-blue-ribbon-600/20 text-blue-ribbon-600 py-1 px-1.5 rounded text-sm">Vchod</span>
-    </div>
+    <slot name="center" />
     <LanguageSwitcher class="flex gap-4 pr-10 font-display text-3xl" />
   </div>
 </template>
