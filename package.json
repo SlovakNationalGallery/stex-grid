@@ -25,6 +25,7 @@
     "@types/openseadragon": "^3.0.10",
     "gsap": "^3.12.3",
     "openseadragon": "^4.1.1",
-    "vite-svg-loader": "^5.1.0"
+    "vite-svg-loader": "^5.1.0",
+    "vue-3-slider-component": "^1.0.0"
   }
 }
