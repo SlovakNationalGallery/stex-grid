@@ -12,6 +12,19 @@
         }}</span>
       </div>
     </template>
+    <template v-slot:center>
+      <div class="flex w-full items-center gap-4">
+        <span
+          class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
+          >Vchod</span
+        >
+        <GridSlider @touch="closePopover" />
+        <span
+          class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
+          >Vchod</span
+        >
+      </div>
+    </template>
   </Navbar>
   <div
     class="no-scrollbar mt-20 w-screen overflow-x-scroll"
@@ -50,6 +63,29 @@
             class="absolute left-3/4 top-3/4 h-1 w-1 rounded-full bg-black opacity-50"
           ></div>
         </div>
+      </template>
+      <!-- drop shadow -->
+      <template v-for="artwork in mockArtworks">
+        <div
+          v-if="
+            !openedPopover ||
+            (openedPopover && artwork.group === openedPopover?.id)
+          "
+          :class="`${
+            artwork.group === openedPopover?.id
+              ? 'bg-blue-ribbon-600 blur'
+              : 'bg-blue-ribbon-600/20'
+          }
+          translate-x-[calc(25%+2px)] translate-y-[calc(25%+2px)] transition-all
+          `"
+          :key="artwork.id"
+          :style="{
+            gridColumnStart: artwork.x,
+            gridRowStart: artwork.y,
+            gridColumnEnd: artwork.x + artwork.spanX,
+            gridRowEnd: artwork.y + artwork.spanY,
+          }"
+        />
       </template>
       <!-- tiny legs under artworks -->
       <div
@@ -110,14 +146,23 @@
       </button>
     </div>
   </div>
-  <div
-    v-if="openedZoomId"
-    class="absolute bottom-0 left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black"
+  <transition
+    enter-active-class="duration-150 ease-out"
+    enter-from-class="transform opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="duration-150 ease-in"
+    leave-from-class="opacity-100"
+    leave-to-class="transform opacity-0"
   >
-    <ClientOnly>
-      <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
-    </ClientOnly>
-  </div>
+    <div
+      v-if="openedZoomId"
+      class="absolute bottom-0 bg-white left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black"
+    >
+      <ClientOnly>
+        <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
+      </ClientOnly>
+    </div>
+  </transition>
   <Popover
     v-if="openedPopover"
     :class="[
