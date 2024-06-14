@@ -156,7 +156,7 @@
   >
     <div
       v-if="openedZoomId"
-      class="absolute bottom-0 bg-white left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black"
+      class="absolute bottom-0 left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black bg-white"
     >
       <ClientOnly>
         <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
@@ -172,17 +172,51 @@
     @close="closePopover"
   >
     <template v-slot:header>
-      <div class="flex flex-col">
-        <span>{{ openedPopover.artworks.length }} </span>
-        <span>{{ openedPopover.title }}</span>
+      <div class="flex flex-col gap-1.5">
+        <span class="text-xl text-blue-600"
+          >{{ openedPopover.artworks.length }} {{ $t("diel v skupine") }}</span
+        >
+        <span class="font-display text-2xl font-medium">{{
+          openedPopover.title
+        }}</span>
       </div>
     </template>
-    <template v-slot:body> BODY </template>
+    <template v-slot:body>
+      <div class="flex flex-col gap-5">
+        <span class="font-display text-2xl font-medium">
+          {{ openedPopover.intro }}
+        </span>
+        <div class="flex flex-col gap-3">
+          <div
+            v-for="(artwork, i) in openedPopover.artworks"
+            class="flex items-baseline gap-3"
+          >
+            <div
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
+            >
+              {{ i + 1 }}
+            </div>
+            <div>{{ artwork }}</div>
+          </div>
+        </div>
+
+        <div
+          class="flex items-center gap-2 rounded-xl bg-black/5 px-4 py-3 text-lg"
+        >
+          <Info class="h-4 w-4" />
+          {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
+        </div>
+        <span class="text-xl">
+          {{ openedPopover.body }}
+        </span>
+      </div>
+    </template>
   </Popover>
 </template>
 <script setup>
 import { watchEffect } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
+import Info from "~/assets/img/info.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
