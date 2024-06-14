@@ -14,9 +14,11 @@
     </template>
   </Navbar>
   <div
-    class="mt-20 w-screen overflow-x-scroll"
+    class="no-scrollbar mt-20 w-screen overflow-x-scroll"
     ref="grid"
-    @touchmove="closePopover"
+    @touchmove="onTouchMove"
+    @touchstart="onTouchstart"
+    @touchend="onTouchend"
   >
     <div
       :style="{
@@ -53,7 +55,7 @@
       <div
         v-for="artwork in mockArtworks"
         :key="artwork.id + ' legs'"
-        class="flex flex-col"
+        :class="[{ 'opacity-0': openedPopover }, 'flex flex-col']"
         :style="{
           gridColumnStart: artwork.x,
           gridRowStart: artwork.y,
@@ -85,7 +87,8 @@
       <!-- artworks -->
       <button
         v-for="artwork in mockArtworks"
-        class="z-10 outline outline-2 outline-black"
+        :disabled="openedPopover && artwork.group !== openedPopover.id"
+        class="group z-10 outline outline-2 outline-black disabled:-z-10 disabled:outline-gray-500"
         :key="artwork.id"
         :style="{
           gridColumnStart: artwork.x,
@@ -93,18 +96,34 @@
           gridColumnEnd: artwork.x + artwork.spanX,
           gridRowEnd: artwork.y + artwork.spanY,
         }"
-        @click="(e) => openGroupPopover(e, artwork)"
+        @click="
+          (e) =>
+            openedPopover
+              ? openZoomViewer(e, artwork)
+              : openGroupPopover(e, artwork)
+        "
       >
         <img
-          class="z-20 h-full w-full object-cover"
+          class="z-20 h-full w-full object-cover group-disabled:brightness-150 group-disabled:contrast-75 group-disabled:saturate-50"
           :src="`https://www.webumenia.sk/dielo/nahlad/${artwork.id}/600`"
         />
       </button>
     </div>
   </div>
+  <div
+    v-if="openedZoomId"
+    class="absolute bottom-0 left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black"
+  >
+    <ClientOnly>
+      <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
+    </ClientOnly>
+  </div>
   <Popover
     v-if="openedPopover"
-    class="absolute bottom-0 right-0 z-20 h-[95%] w-1/3"
+    :class="[
+      { 'rounded-tl-xl': !openedZoomId },
+      'absolute bottom-0 right-0 z-20 h-[95%] w-1/3',
+    ]"
     @close="closePopover"
   >
     <template v-slot:header>
@@ -113,15 +132,49 @@
         <span>{{ openedPopover.title }}</span>
       </div>
     </template>
-    <template v-slot:body> HERE GOES BODY </template>
+    <template v-slot:body> BODY </template>
   </Popover>
 </template>
 <script setup>
+import { watchEffect } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
+const openedZoomId = ref(null);
+
 const grid = ref();
+const gridScrollPosition = useGridScrollPosition();
+const isTouchingGrid = ref(false);
+
+watchEffect(() => {
+  if (!grid.value || isTouchingGrid.value) return;
+  const { scrollWidth, offsetWidth } = grid.value;
+  grid.value.scrollTo({
+    //TODO: better offset calculation
+    left: ((scrollWidth - offsetWidth) / 100) * gridScrollPosition.value,
+    behavior: "smooth",
+  });
+});
+
+const onTouchMove = () => {
+  closePopover();
+  if (!grid.value) return;
+  const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
+  gridScrollPosition.value = (scrollLeft / (scrollWidth - offsetWidth)) * 100;
+};
+
+const onTouchend = () => {
+  isTouchingGrid.value = false;
+};
+
+const onTouchstart = () => {
+  isTouchingGrid.value = true;
+};
+
+const openZoomViewer = (e, artwork) => {
+  openedZoomId.value = artwork.id;
+};
 
 const openGroupPopover = (e, artwork) => {
   if (e.target instanceof Element) {
@@ -141,6 +194,7 @@ const openGroupPopover = (e, artwork) => {
   );
 
   openedPopover.value = {
+    id: group.id,
     title: group.title,
     intro: group.intro,
     body: group.body,
@@ -148,8 +202,13 @@ const openGroupPopover = (e, artwork) => {
   };
 };
 
+const closeZoomViewer = () => {
+  openedZoomId.value = null;
+};
+
 const closePopover = () => {
   openedPopover.value = null;
+  openedZoomId.value = null;
 };
 
 const mockArtworks = [
