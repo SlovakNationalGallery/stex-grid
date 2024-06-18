@@ -198,7 +198,14 @@
             >
               {{ i + 1 }}
             </div>
-            <div>{{ item }}</div>
+            <div>
+              <span class="font-bold">
+                <template v-if="item.author">
+                  {{ item.author }}: 
+                </template>
+                {{ item.title }},</span>
+              {{ item.dating }}, {{ item.medium }}, {{ item.measurement }}
+            </div>
           </div>
         </div>
 
