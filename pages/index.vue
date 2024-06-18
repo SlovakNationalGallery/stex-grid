@@ -37,11 +37,11 @@
       :style="{
         display: 'grid',
         gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_DIMENSION})`,
-        gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_DIMENSION})`,
+        gridTemplateRows: `repeat(${NUM_OF_ROWS+1}, ${SQUARE_DIMENSION})`,
       }"
     >
       <template
-        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS })"
+        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS+1 })"
         :key="y"
         class="border border-black"
       >
@@ -281,6 +281,21 @@ const closePopover = () => {
 const config = useRuntimeConfig();
 const apiUrl = config.public.apiUrl;
 const { data } = await useFetch(`${apiUrl}/sections`);
-const sectionsData = computed(() => data.value.data);
+
+// increment all x/y positions +1 to fix issues with grid positioning
+const sectionsData = computed(() => {
+  return data.value.data.map(section => {
+    return {
+      ...section,
+      items: section.items.map(item => {
+        return {
+          ...item,
+          x: item.x !== null ? item.x + 1 : item.x,
+          y: item.y !== null ? item.y + 1 : item.y
+        };
+      })
+    };
+  });
+});
 
 </script>
