@@ -66,7 +66,7 @@
     </template>
   </Navbar>
   <div
-    class="no-scrollbar mt-20 w-screen overflow-x-scroll"
+    class="no-scrollbar mt-20 w-screen overflow-x-scroll pt-[10px] pb-5"
     ref="grid"
     @touchmove="onTouchMove"
     @touchstart="onTouchstart"
@@ -76,11 +76,11 @@
       :style="{
         display: 'grid',
         gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_DIMENSION})`,
-        gridTemplateRows: `repeat(${NUM_OF_ROWS + 1}, ${SQUARE_DIMENSION})`,
+        gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_DIMENSION})`,
       }"
     >
       <template
-        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS + 1 })"
+        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS })"
         :key="y"
         class="border border-black"
       >
