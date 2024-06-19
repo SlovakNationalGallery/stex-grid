@@ -52,7 +52,7 @@
       </div>
     </template>
     <template v-slot:center>
-      <div class="flex w-full items-center gap-5">
+      <div class="flex w-full items-center gap-4">
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
           >{{ $t("Vchod") }}</span
