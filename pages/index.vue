@@ -1,4 +1,45 @@
 <template>
+  <div
+    v-if="loading"
+    class="absolute inset-0 z-30 flex items-center justify-center bg-slate-200/90"
+  >
+    <svg
+      class="-ml-1 mr-3 h-5 w-5 animate-spin text-black"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      ></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
+    Loading ...
+  </div>
+  <div
+    v-else-if="error"
+    class="absolute inset-0 z-30 flex items-center justify-center bg-slate-200/90"
+  >
+    <div class="text-center">
+      Error occurred while loading data. Please try again.<br />
+      <button
+        class="mt-2 rounded bg-blue-ribbon-600 px-4 py-2 text-white"
+        @click.prevent="fetchData"
+      >
+        Reload
+      </button>
+    </div>
+  </div>
+
   <Navbar ref="navbar" class="fixed top-0 border-t-3">
     <template v-slot:icon class="w-20">
       <div class="flex h-full w-20 items-center justify-center bg-black">
@@ -37,11 +78,11 @@
       :style="{
         display: 'grid',
         gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_DIMENSION})`,
-        gridTemplateRows: `repeat(${NUM_OF_ROWS+1}, ${SQUARE_DIMENSION})`,
+        gridTemplateRows: `repeat(${NUM_OF_ROWS + 1}, ${SQUARE_DIMENSION})`,
       }"
     >
       <template
-        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS+1 })"
+        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS + 1 })"
         :key="y"
         class="border border-black"
       >
@@ -166,7 +207,7 @@
       </ClientOnly>
     </div>
   </transition>
-  
+
   <Popover
     v-if="openedPopover"
     :class="[
@@ -187,7 +228,10 @@
     </template>
     <template v-slot:body>
       <div class="flex flex-col gap-5">
-        <div class="font-display text-2xl font-medium" v-html="openedPopover.perex"></div>
+        <div
+          class="font-display text-2xl font-medium"
+          v-html="openedPopover.perex"
+        ></div>
         <div class="flex flex-col gap-3">
           <div
             v-for="(item, i) in openedPopover.items"
@@ -200,10 +244,9 @@
             </div>
             <div>
               <span class="font-bold">
-                <template v-if="item.author">
-                  {{ item.author }}: 
-                </template>
-                {{ item.title }},</span>
+                <template v-if="item.author"> {{ item.author }}: </template>
+                {{ item.title }},</span
+              >
               {{ item.dating }}, {{ item.medium }}, {{ item.measurement }}
             </div>
           </div>
@@ -219,16 +262,18 @@
       </div>
     </template>
   </Popover>
-  
 </template>
 <script setup>
-import { watchEffect } from "vue";
+import { watchEffect, watch } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
+const loading = ref(false);
+const error = ref(null);
+const sections = ref(null);
 
 const grid = ref();
 const gridScrollPosition = useGridScrollPosition();
@@ -288,27 +333,46 @@ const closePopover = () => {
 };
 
 const config = useRuntimeConfig();
-const apiUrl = config.public.apiUrl;
-const { data } = await useFetch(`${apiUrl}/sections`, {
-  headers: {
-    "Accept-Language": locale,
-  },
+
+const fetchData = async () => {
+  const apiUrl = config.public.apiUrl;
+  loading.value = true;
+  try {
+    const { data } = await useFetch(`${apiUrl}/sections`, {
+      headers: {
+        "Accept-Language": locale,
+      },
+    });
+    sections.value = data.value;
+  } catch (err) {
+    error.value = err;
+  } finally {
+    loading.value = false;
+  }
+};
+
+// watch for changes in locale and fetch data again
+watch(locale, () => {
+  fetchData();
 });
+
+// fetch data initially
+fetchData();
 
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
-  return data.value.data.map(section => {
+  if (!sections.value) return [];
+  return sections.value.data.map((section) => {
     return {
       ...section,
-      items: section.items.map(item => {
+      items: section.items.map((item) => {
         return {
           ...item,
           x: item.x !== null ? item.x + 1 : item.x,
-          y: item.y !== null ? item.y + 1 : item.y
+          y: item.y !== null ? item.y + 1 : item.y,
         };
-      })
+      }),
     };
   });
 });
-
 </script>
