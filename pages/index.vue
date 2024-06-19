@@ -82,7 +82,7 @@
       <template
         v-for="(_, y) in Array.from({ length: NUM_OF_ROWS+1 })"
         :key="y"
-        class="border border-black"
+        class="border-2 border-black"
       >
         <div
           v-for="(_, x) in Array.from({ length: NUM_OF_COLUMNS })"
@@ -211,14 +211,24 @@
     v-if="openedPopover"
     :class="[
       { 'rounded-tl-xl': !openedZoomId },
-      'absolute bottom-0 right-0 z-20 h-[95%] w-1/3',
+      'absolute bottom-0 right-0 z-20 top-20 w-[528px]',
     ]"
     @close="closePopover"
   >
     <template v-slot:header>
       <div class="flex flex-col gap-1.5">
         <span class="text-xl text-blue-600"
-          >{{ openedPopover.items.length }} {{ $t("diel v skupine") }}</span
+          >{{ openedPopover.items.length }} 
+          <template v-if="openedPopover.items.length === 1">
+            {{ $t("dielo v skupine") }}
+          </template>
+          <template v-if="openedPopover.items.length > 1 && openedPopover.items.length < 5">
+            {{ $t("diela v skupine") }}
+          </template>
+          <template v-else>
+            {{ $t("diel v skupine") }}
+          </template>
+        </span
         >
         <span class="font-display text-2xl font-medium">{{
           openedPopover.title
@@ -234,14 +244,14 @@
         <div class="flex flex-col gap-3">
           <div
             v-for="(item, i) in openedPopover.items"
-            class="flex items-baseline gap-3"
+            class="flex items-start gap-3"
           >
             <div
               class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
             >
               {{ i + 1 }}
             </div>
-            <div>
+            <div class="leading-normal">
               <span class="font-bold">
                 <template v-if="item.author"> {{ item.author }}: </template>
                 {{ item.title }},</span
@@ -254,7 +264,7 @@
         <div
           class="flex items-center gap-2 rounded-xl bg-black/5 px-4 py-3 text-lg"
         >
-          <Info class="h-4 w-4" />
+          <Info class="h-6 w-6" />
           {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
         </div>
         <div class="text-xl" v-html="openedPopover.text"></div>
