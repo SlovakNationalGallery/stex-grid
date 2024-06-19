@@ -66,7 +66,7 @@
     </template>
   </Navbar>
   <div
-    class="no-scrollbar mt-20 w-screen overflow-x-scroll pt-[10px] pb-5"
+    class="no-scrollbar mt-20 w-screen overflow-x-scroll pb-5 pt-[10px]"
     ref="grid"
     @touchmove="onTouchMove"
     @touchstart="onTouchstart"
@@ -116,7 +116,7 @@
                 ? 'bg-blue-ribbon-600 blur'
                 : 'bg-blue-ribbon-600/20'
             }
-          translate-x-[calc(25%+2px)] translate-y-[calc(25%+2px)] transition-all
+          transition-all
           `"
             :key="item.id"
             :style="{
@@ -124,6 +124,7 @@
               gridRowStart: item.y,
               gridColumnEnd: item.x + item.span_x,
               gridRowEnd: item.y + item.span_y,
+              ...translateShadowStyle,
             }"
           />
         </template>
@@ -372,5 +373,19 @@ const sectionsData = computed(() => {
       }),
     };
   });
+});
+
+const calculateSquareDimension = () => {
+  const viewportHeight = window.innerHeight;
+  const pxValue = 110;
+  return (viewportHeight - pxValue) / NUM_OF_ROWS;
+};
+
+const translateShadowStyle = computed(() => {
+  return {
+    transform: `translateX(${calculateSquareDimension() / 4}px) translateY(${
+      calculateSquareDimension() / 4
+    }px)`,
+  };
 });
 </script>
