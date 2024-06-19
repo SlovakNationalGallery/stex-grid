@@ -66,7 +66,7 @@
     </template>
   </Navbar>
   <div
-    class="no-scrollbar mt-20 w-screen overflow-x-scroll overflow-y-hidden max-h-[calc(100vh-110px)] pt-[10px]"
+    class="overscroll-contain no-scrollbar mt-20 w-screen overflow-x-scroll overflow-y-hidden max-h-[calc(100vh-110px)] pt-[10px]"
     ref="grid"
     @touchmove="onTouchMove"
     @touchstart="onTouchstart"
@@ -222,14 +222,13 @@
           <template v-if="openedPopover.items.length === 1">
             {{ $t("dielo v skupine") }}
           </template>
-          <template v-if="openedPopover.items.length > 1 && openedPopover.items.length < 5">
+          <template v-else-if="openedPopover.items.length > 1 && openedPopover.items.length < 5">
             {{ $t("diela v skupine") }}
           </template>
           <template v-else>
             {{ $t("diel v skupine") }}
           </template>
-        </span
-        >
+        </span>
         <span class="font-display text-2xl font-medium">{{
           openedPopover.title
         }}</span>
