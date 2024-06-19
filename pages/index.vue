@@ -23,7 +23,7 @@
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       ></path>
     </svg>
-    Loading ...
+    {{ $t("Načítava sa") }} ...
   </div>
   <div
     v-else-if="error"
@@ -40,29 +40,27 @@
     </div>
   </div>
 
-  <Navbar ref="navbar" class="fixed top-0 border-t-3">
-    <template v-slot:icon class="w-20">
-      <div class="flex h-full w-20 items-center justify-center bg-black">
-        <Logo class="h-12 w-12" />
-      </div>
+  <Navbar ref="navbar" class="fixed top-0">
+    <template v-slot:icon>
+      <Logo class="mx-6 h-10 w-10" />
     </template>
     <template v-slot:content>
-      <div class="flex items-end gap-6 px-6">
-        <span class="align-bottom font-display text-3xl font-bold">{{
+      <div class="flex items-end gap-6">
+        <span class="align-bottom font-display text-[32px] font-bold">{{
           $t("Dizajn v kocke")
         }}</span>
       </div>
     </template>
     <template v-slot:center>
-      <div class="flex w-full items-center gap-4">
+      <div class="flex w-full items-center gap-5">
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
-          >Vchod</span
+          >{{ $t("Vchod") }}</span
         >
         <GridSlider @touch="closePopover" />
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
-          >Vchod</span
+          >{{ $t("Vchod") }}</span
         >
       </div>
     </template>

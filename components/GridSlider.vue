@@ -15,7 +15,7 @@
             class="flex gap-2 items-center rounded-full border-4 border-white bg-blue-ribbon-600 px-4 text-white"
           >
             <MouseScroll class="h-8 w-8 rotate-90 fill-white" />
-            <span class="py-2">Navigácia</span>
+            <span class="py-2">{{ $t("Navigácia") }}</span>
           </div>
         </div>
       </template>
