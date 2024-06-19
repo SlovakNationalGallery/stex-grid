@@ -199,7 +199,7 @@
   >
     <div
       v-if="openedZoomId"
-      class="absolute bottom-0 left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black bg-white"
+      class="absolute bottom-0 left-0 z-20 top-[80px] w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
     >
       <ClientOnly>
         <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
