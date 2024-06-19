@@ -229,7 +229,7 @@
             {{ $t("diel v skupine") }}
           </template>
         </span>
-        <span class="font-display text-2xl font-medium">{{
+        <span class="font-display text-2xl font-bold">{{
           openedPopover.title
         }}</span>
       </div>
@@ -237,7 +237,7 @@
     <template v-slot:body>
       <div class="flex flex-col gap-5">
         <div
-          class="font-display text-2xl font-medium"
+          class="text-2xl font-medium"
           v-html="openedPopover.perex"
         ></div>
         <div class="flex flex-col gap-3">
@@ -266,7 +266,7 @@
           <Info class="h-6 w-6" />
           {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
         </div>
-        <article class="prose-xl" v-html="openedPopover.text"></article>
+        <article class="prose-xl leading-8" v-html="openedPopover.text"></article>
       </div>
     </template>
   </Popover>
