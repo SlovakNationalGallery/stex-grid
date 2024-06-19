@@ -267,7 +267,7 @@
           <Info class="h-6 w-6" />
           {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
         </div>
-        <div class="text-xl" v-html="openedPopover.text"></div>
+        <article class="prose-xl" v-html="openedPopover.text"></article>
       </div>
     </template>
   </Popover>
