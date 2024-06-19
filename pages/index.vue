@@ -234,6 +234,8 @@ const grid = ref();
 const gridScrollPosition = useGridScrollPosition();
 const isTouchingGrid = ref(false);
 
+const { locale } = useI18n();
+
 watchEffect(() => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
@@ -287,7 +289,11 @@ const closePopover = () => {
 
 const config = useRuntimeConfig();
 const apiUrl = config.public.apiUrl;
-const { data } = await useFetch(`${apiUrl}/sections`);
+const { data } = await useFetch(`${apiUrl}/sections`, {
+  headers: {
+    "Accept-Language": locale,
+  },
+});
 
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
