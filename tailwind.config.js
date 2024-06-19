@@ -10,8 +10,8 @@ export default {
   ],
   theme: {
     fontFamily: {
-      'display': ['SNG Sans'],
-      'body': ['Circular']
+      sans: ['Circular', 'sans-serif'],
+      display: ['SNG Sans'],
     },
     extend: {
       colors: {
