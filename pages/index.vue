@@ -69,7 +69,7 @@
     </template>
   </Navbar>
   <div
-    class="overscroll-contain no-scrollbar mt-20 w-screen overflow-x-scroll overflow-y-hidden max-h-[calc(100vh-110px)] pt-[10px]"
+    class="overscroll-contain no-scrollbar pt-[100px] w-screen overflow-x-scroll overflow-y-hidden max-h-screen pb-5"
     ref="grid"
     @scroll="onScroll"
     @touchstart="onTouchstart"
@@ -164,7 +164,7 @@
             </div>
           </div>
         </div>
-
+        
         <!-- artworks -->
         <button
           v-for="item in section.items"
@@ -189,6 +189,20 @@
             :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
           />
         </button>
+        <!-- items index -->
+        <div
+          v-for="(item, i) in openedPopover?.items"
+          class="bg-blue-ribbon-600 w-10 h-10 z-20 flex items-center relative justify-center text-white rounded-full border-2 border-white -translate-x-1/2 -translate-y-1/2 text-2xl"
+          :key="item.id"
+          :style="{
+            gridColumnStart: item.x,
+            gridRowStart: item.y,
+            gridColumnEnd: item.x + item.span_x,
+            gridRowEnd: item.y + item.span_y,
+          }"
+        >
+          {{ i + 1 }}
+        </div>
       </template>
     </div>
   </div>
@@ -275,7 +289,7 @@
   </Popover>
 </template>
 <script setup>
-import { watchEffect, watch } from "vue";
+import { watch } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
