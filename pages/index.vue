@@ -57,7 +57,10 @@
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
           >{{ $t("Vchod") }}</span
         >
-        <GridSlider @touch="closePopover" />
+        <GridSlider
+          @touch="onGridSliderChange"
+          :sliderValue="gridScrollPosition"
+        />
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
           >{{ $t("Vchod") }}</span
@@ -68,7 +71,7 @@
   <div
     class="overscroll-contain no-scrollbar mt-20 w-screen overflow-x-scroll overflow-y-hidden max-h-[calc(100vh-110px)] pt-[10px]"
     ref="grid"
-    @touchmove="onTouchMove"
+    @scroll="onScroll"
     @touchstart="onTouchstart"
     @touchend="onTouchend"
   >
@@ -284,23 +287,22 @@ const error = ref(null);
 const sections = ref(null);
 
 const grid = ref();
-const gridScrollPosition = useGridScrollPosition();
+const gridScrollPosition = ref(50);
 const isTouchingGrid = ref(false);
 
 const { locale } = useI18n();
-
-watchEffect(() => {
+const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
   grid.value.scrollTo({
     //TODO: better offset calculation
     left: ((scrollWidth - offsetWidth) / 100) * gridScrollPosition.value,
-    behavior: "smooth",
+    behavior,
   });
-});
+};
 
-const onTouchMove = () => {
-  closePopover();
+const onScroll = () => {
+  if(isTouchingGrid.value) closePopover();
   if (!grid.value) return;
   const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
   gridScrollPosition.value = (scrollLeft / (scrollWidth - offsetWidth)) * 100;
@@ -318,14 +320,19 @@ const openZoomViewer = (e, artwork) => {
   openedZoomId.value = artwork.id;
 };
 
+const onGridSliderChange = (offsetValue) => {
+  gridScrollPosition.value = offsetValue;
+  closePopover();
+  changeGridScrollPosition();
+};
+
 const openGroupPopover = (e, section) => {
   if (e.target instanceof Element) {
-    const { offsetLeft, offsetWidth } = e.target;
-    grid.value.scrollTo({
-      //TODO: better offset calculation
-      left: Math.max(offsetLeft - grid.value.offsetWidth / 4, 0),
-      behavior: "smooth",
-    });
+    const { offsetLeft: targetOffsetLeft } = e.target;
+    const { scrollWidth, offsetWidth } = grid.value;
+    const offsetLeft = Math.max(targetOffsetLeft - offsetWidth / 4, 0);
+    gridScrollPosition.value = (offsetLeft / (scrollWidth - offsetWidth)) * 100;
+    changeGridScrollPosition("smooth");
   }
 
   openedPopover.value = section;
