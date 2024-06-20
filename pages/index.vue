@@ -191,7 +191,7 @@
             v-if="
               (openedPopover && section.id === openedPopover?.id)
             "
-            class="z-4 0 absolute -left-4 -top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-blue-600 px-4 py-0.5 text-2xl leading-7 text-white"
+            class="z-4 0 absolute left-[-22px] top-[-22px] inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-blue-600 px-4 py-0.5 text-2xl leading-7 text-white"
           >
             {{ item.ord }}
           </div>
