@@ -1,11 +1,14 @@
 <template>
-  <div class="w-full">
+  <div class="w-full relative">
+    <!-- Fake rail -->
+    <div class="absolute inset-x-0 bg-blue-400 h-1 top-[calc(50%-2px)] bg-blue-ribbon-600/20 rounded-xl"></div>
     <VueSlider
       :min="0"
       :max="100"
       @change="$emit('touch')"
       v-model="gridScrollPosition"
       :step="0.0001"
+      class="mx-16"
       :process="false"
       :tooltip="'none'"
     >
