@@ -33,7 +33,7 @@
       Error occurred while loading data. Please try again.<br />
       <button
         class="mt-2 rounded bg-blue-ribbon-600 px-4 py-2 text-white"
-        @click.prevent="fetchData"
+        @click.prevent="refresh"
       >
         Reload
       </button>
@@ -300,9 +300,6 @@ import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const loading = ref(false);
-const error = ref(null);
-const sections = ref(null);
 
 const grid = ref();
 const gridScrollPosition = ref(50);
@@ -370,32 +367,13 @@ const closePopover = () => {
 };
 
 const config = useRuntimeConfig();
-
-const fetchData = async () => {
-  const apiUrl = config.public.apiUrl;
-  loading.value = true;
-  try {
-    const { data } = await useFetch(`${apiUrl}/sections`, {
+const apiUrl = config.public.apiUrl;
+const {data: sections, error, loading, refresh} = useFetch(`${apiUrl}/sections`, {
       headers: {
         "Accept-Language": locale,
       },
+      watch: [locale]
     });
-    sections.value = data.value;
-  } catch (err) {
-    error.value = err;
-  } finally {
-    loading.value = false;
-  }
-};
-
-// watch for changes in locale and fetch data again
-watch(locale, () => {
-  fetchData();
-});
-
-// fetch data initially
-fetchData();
-
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
   if (!sections.value) return [];
