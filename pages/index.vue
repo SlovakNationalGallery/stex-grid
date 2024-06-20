@@ -69,7 +69,7 @@
     </template>
   </Navbar>
   <div
-    class="overscroll-contain no-scrollbar mt-20 w-screen overflow-x-scroll overflow-y-hidden max-h-[calc(100vh-110px)] pt-[10px]"
+    class="no-scrollbar mt-20 max-h-[calc(100vh-110px)] w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pt-[10px]"
     ref="grid"
     @scroll="onScroll"
     @touchstart="onTouchstart"
@@ -79,11 +79,11 @@
       :style="{
         display: 'grid',
         gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_DIMENSION})`,
-        gridTemplateRows: `repeat(${NUM_OF_ROWS+1}, ${SQUARE_DIMENSION})`,
+        gridTemplateRows: `repeat(${NUM_OF_ROWS + 1}, ${SQUARE_DIMENSION})`,
       }"
     >
       <template
-        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS+1 })"
+        v-for="(_, y) in Array.from({ length: NUM_OF_ROWS + 1 })"
         :key="y"
         class="border-2 border-black"
       >
@@ -169,7 +169,7 @@
         <button
           v-for="item in section.items"
           :disabled="openedPopover && section.id !== openedPopover.id"
-          class="group z-10 outline outline-2 outline-black disabled:-z-10 disabled:outline-gray-500"
+          class="border-1 group relative z-10 box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
           :key="item.id"
           :style="{
             gridColumnStart: item.x,
@@ -202,7 +202,7 @@
   >
     <div
       v-if="openedZoomId"
-      class="absolute bottom-0 left-0 z-20 top-[80px] w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
+      class="absolute bottom-0 left-0 top-[80px] z-20 w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
     >
       <ClientOnly>
         <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
@@ -214,18 +214,22 @@
     v-if="openedPopover"
     :class="[
       { 'rounded-tl-xl': !openedZoomId },
-      'absolute bottom-0 right-0 z-20 top-20 w-[528px]',
+      'absolute bottom-0 right-0 top-20 z-20 w-[528px]',
     ]"
     @close="closePopover"
   >
     <template v-slot:header>
       <div class="flex flex-col gap-1.5">
         <span class="text-xl text-blue-600"
-          >{{ openedPopover.items.length }} 
+          >{{ openedPopover.items.length }}
           <template v-if="openedPopover.items.length === 1">
             {{ $t("dielo v skupine") }}
           </template>
-          <template v-else-if="openedPopover.items.length > 1 && openedPopover.items.length < 5">
+          <template
+            v-else-if="
+              openedPopover.items.length > 1 && openedPopover.items.length < 5
+            "
+          >
             {{ $t("diela v skupine") }}
           </template>
           <template v-else>
@@ -239,10 +243,7 @@
     </template>
     <template v-slot:body>
       <div class="flex flex-col gap-5">
-        <div
-          class="text-2xl font-medium"
-          v-html="openedPopover.perex"
-        ></div>
+        <div class="text-2xl font-medium" v-html="openedPopover.perex"></div>
         <div class="flex flex-col gap-3">
           <div
             v-for="(item, i) in openedPopover.items"
@@ -269,7 +270,10 @@
           <Info class="h-6 w-6" />
           {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
         </div>
-        <article class="prose-xl leading-8" v-html="openedPopover.text"></article>
+        <article
+          class="prose-xl leading-8"
+          v-html="openedPopover.text"
+        ></article>
       </div>
     </template>
   </Popover>
@@ -302,7 +306,7 @@ const changeGridScrollPosition = (behavior) => {
 };
 
 const onScroll = () => {
-  if(isTouchingGrid.value) closePopover();
+  if (isTouchingGrid.value) closePopover();
   if (!grid.value) return;
   const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
   gridScrollPosition.value = (scrollLeft / (scrollWidth - offsetWidth)) * 100;
