@@ -172,7 +172,7 @@
             .sort((a, b) => a.x - b.x)
             .sort((a, b) => a.y - b.y)"
           :disabled="openedPopover && section.id !== openedPopover.id"
-          class="border-1 group relative z-10 box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
+          class="border-1 group relative z-10 box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500 disabled:opacity-30"
           :key="item.id"
           :style="{
             gridColumnStart: item.x,
