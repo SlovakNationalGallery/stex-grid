@@ -69,7 +69,7 @@
     </template>
   </Navbar>
   <div
-    class="no-scrollbar mt-20 max-h-[calc(100vh-110px)] w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pt-[10px]"
+    class="no-scrollbar max-h-[100vh] w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pt-[90px]"
     ref="grid"
     @scroll="onScroll"
     @touchstart="onTouchstart"
@@ -167,7 +167,10 @@
 
         <!-- artworks -->
         <button
-          v-for="item in section.items"
+          v-for="item in section.items
+            .slice()
+            .sort((a, b) => a.x - b.x)
+            .sort((a, b) => a.y - b.y)"
           :disabled="openedPopover && section.id !== openedPopover.id"
           class="border-1 group relative z-10 box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
           :key="item.id"
@@ -184,9 +187,17 @@
                 : openGroupPopover(e, section)
           "
         >
+          <div
+            v-if="
+              (openedPopover && section.id === openedPopover?.id)
+            "
+            class="z-4 0 absolute -left-4 -top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-blue-600 px-4 py-0.5 text-2xl leading-7 text-white"
+          >
+            {{ item.ord }}
+          </div>
           <img
             class="z-20 h-full w-full object-cover group-disabled:brightness-150 group-disabled:contrast-75 group-disabled:saturate-50"
-            :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
+            :src="item.image_src"
           />
         </button>
       </template>
@@ -246,13 +257,13 @@
         <div class="text-2xl font-medium" v-html="openedPopover.perex"></div>
         <div class="flex flex-col gap-3">
           <div
-            v-for="(item, i) in openedPopover.items"
+            v-for="item in openedPopover.items"
             class="flex items-start gap-3"
           >
             <div
               class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
             >
-              {{ i + 1 }}
+              {{ item.ord }}
             </div>
             <div class="leading-normal">
               <span class="font-bold">
