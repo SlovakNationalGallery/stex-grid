@@ -308,8 +308,8 @@ const isTouchingGrid = ref(false);
 onMounted(() => {
   changeGridScrollPosition();
 });
-
 const { locale } = useI18n();
+
 const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
@@ -368,27 +368,36 @@ const closePopover = () => {
 
 const config = useRuntimeConfig();
 const apiUrl = config.public.apiUrl;
-const {data: sections, error, loading, refresh} = useFetch(`${apiUrl}/sections`, {
-      headers: {
-        "Accept-Language": locale,
-      },
-      watch: [locale]
-    });
+const {
+  data: sections,
+  error,
+  pending: loading,
+  refresh,
+} = useFetch(`${apiUrl}/sections`, {
+  headers: {
+    "Accept-Language": locale,
+  },
+  watch: [locale],
+});
+
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
   if (!sections.value) return [];
-  return sections.value.data.map((section) => {
-    return {
-      ...section,
-      items: section.items.map((item) => {
-        return {
-          ...item,
-          x: item.x !== null ? item.x + 1 : item.x,
-          y: item.y !== null ? item.y + 1 : item.y,
-        };
-      }),
-    };
-  });
+  return sections.value.data.map((section) => ({
+    ...section,
+    items: section.items.map((item) => ({
+      ...item,
+      x: item.x !== null ? item.x + 1 : item.x,
+      y: item.y !== null ? item.y + 1 : item.y,
+    })),
+  }));
+});
+
+watchEffect(() => {
+  if (!openedPopover.value || !sectionsData.value) return;
+  openedPopover.value = sectionsData.value.find(
+    (section) => openedPopover.value.id === section.id,
+  );
 });
 
 const calculateSquareDimension = () => {
