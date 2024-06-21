@@ -169,7 +169,7 @@
         <button
           v-for="item in section.items"
           :disabled="openedPopover && section.id !== openedPopover.id"
-          class="group z-10 border-1 group relative box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
+          class="group z-10 border-1 group box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
           :key="item.id"
           :style="{
             gridColumnStart: item.x,
