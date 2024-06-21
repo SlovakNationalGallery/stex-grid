@@ -33,7 +33,7 @@
       Error occurred while loading data. Please try again.<br />
       <button
         class="mt-2 rounded bg-blue-ribbon-600 px-4 py-2 text-white"
-        @click.prevent="fetchData"
+        @click.prevent="refresh"
       >
         Reload
       </button>
@@ -300,9 +300,6 @@ import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const loading = ref(false);
-const error = ref(null);
-const sections = ref(null);
 
 const grid = ref();
 const gridScrollPosition = ref(50);
@@ -311,8 +308,8 @@ const isTouchingGrid = ref(false);
 onMounted(() => {
   changeGridScrollPosition();
 });
-
 const { locale } = useI18n();
+
 const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
@@ -370,47 +367,37 @@ const closePopover = () => {
 };
 
 const config = useRuntimeConfig();
-
-const fetchData = async () => {
-  const apiUrl = config.public.apiUrl;
-  loading.value = true;
-  try {
-    const { data } = await useFetch(`${apiUrl}/sections`, {
-      headers: {
-        "Accept-Language": locale,
-      },
-    });
-    sections.value = data.value;
-  } catch (err) {
-    error.value = err;
-  } finally {
-    loading.value = false;
-  }
-};
-
-// watch for changes in locale and fetch data again
-watch(locale, () => {
-  fetchData();
+const apiUrl = config.public.apiUrl;
+const {
+  data: sections,
+  error,
+  pending: loading,
+  refresh,
+} = useFetch(`${apiUrl}/sections`, {
+  headers: {
+    "Accept-Language": locale,
+  },
+  watch: [locale],
 });
-
-// fetch data initially
-fetchData();
 
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
   if (!sections.value) return [];
-  return sections.value.data.map((section) => {
-    return {
-      ...section,
-      items: section.items.map((item) => {
-        return {
-          ...item,
-          x: item.x !== null ? item.x + 1 : item.x,
-          y: item.y !== null ? item.y + 1 : item.y,
-        };
-      }),
-    };
-  });
+  return sections.value.data.map((section) => ({
+    ...section,
+    items: section.items.map((item) => ({
+      ...item,
+      x: item.x !== null ? item.x + 1 : item.x,
+      y: item.y !== null ? item.y + 1 : item.y,
+    })),
+  }));
+});
+
+watchEffect(() => {
+  if (!openedPopover.value || !sectionsData.value) return;
+  openedPopover.value = sectionsData.value.find(
+    (section) => openedPopover.value.id === section.id,
+  );
 });
 
 const calculateSquareDimension = () => {
