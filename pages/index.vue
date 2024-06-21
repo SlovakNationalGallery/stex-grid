@@ -23,7 +23,7 @@
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       ></path>
     </svg>
-    Loading ...
+    {{ $t("Načítava sa") }} ...
   </div>
   <div
     v-else-if="error"
@@ -33,22 +33,20 @@
       Error occurred while loading data. Please try again.<br />
       <button
         class="mt-2 rounded bg-blue-ribbon-600 px-4 py-2 text-white"
-        @click.prevent="fetchData"
+        @click.prevent="refresh"
       >
         Reload
       </button>
     </div>
   </div>
 
-  <Navbar ref="navbar" class="fixed top-0 border-t-3">
-    <template v-slot:icon class="w-20">
-      <div class="flex h-full w-20 items-center justify-center bg-black">
-        <Logo class="h-12 w-12" />
-      </div>
+  <Navbar ref="navbar" class="fixed top-0">
+    <template v-slot:icon>
+      <Logo class="mx-6 h-10 w-10" />
     </template>
     <template v-slot:content>
-      <div class="flex items-end gap-6 px-6">
-        <span class="align-bottom font-display text-3xl font-bold">{{
+      <div class="flex items-end gap-6">
+        <span class="align-bottom font-display text-[32px] font-bold">{{
           $t("Dizajn v kocke")
         }}</span>
       </div>
@@ -57,20 +55,23 @@
       <div class="flex w-full items-center gap-4">
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
-          >Vchod</span
+          >{{ $t("Vchod") }}</span
         >
-        <GridSlider @touch="closePopover" />
+        <GridSlider
+          @touch="onGridSliderChange"
+          :sliderValue="gridScrollPosition"
+        />
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
-          >Vchod</span
+          >{{ $t("Vchod") }}</span
         >
       </div>
     </template>
   </Navbar>
   <div
-    class="no-scrollbar mt-20 w-screen overflow-x-scroll"
+    class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-[100px]"
     ref="grid"
-    @touchmove="onTouchMove"
+    @scroll="onScroll"
     @touchstart="onTouchstart"
     @touchend="onTouchend"
   >
@@ -84,7 +85,7 @@
       <template
         v-for="(_, y) in Array.from({ length: NUM_OF_ROWS + 1 })"
         :key="y"
-        class="border border-black"
+        class="border-2 border-black"
       >
         <div
           v-for="(_, x) in Array.from({ length: NUM_OF_COLUMNS })"
@@ -118,7 +119,7 @@
                 ? 'bg-blue-ribbon-600 blur'
                 : 'bg-blue-ribbon-600/20'
             }
-          translate-x-[calc(25%+2px)] translate-y-[calc(25%+2px)] transition-all
+          transition-all
           `"
             :key="item.id"
             :style="{
@@ -126,6 +127,7 @@
               gridRowStart: item.y,
               gridColumnEnd: item.x + item.span_x,
               gridRowEnd: item.y + item.span_y,
+              ...translateShadowStyle,
             }"
           />
         </template>
@@ -167,7 +169,7 @@
         <button
           v-for="item in section.items"
           :disabled="openedPopover && section.id !== openedPopover.id"
-          class="group z-10 outline outline-2 outline-black disabled:-z-10 disabled:outline-gray-500"
+          class="group z-10 border-1 group box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
           :key="item.id"
           :style="{
             gridColumnStart: item.x,
@@ -187,6 +189,20 @@
             :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
           />
         </button>
+        <!-- items index -->
+        <div
+          v-for="(item, i) in openedPopover?.items"
+          class="relative z-20 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-blue-ribbon-600 text-2xl text-white"
+          :key="item.id"
+          :style="{
+            gridColumnStart: item.x,
+            gridRowStart: item.y,
+            gridColumnEnd: item.x + item.span_x,
+            gridRowEnd: item.y + item.span_y,
+          }"
+        >
+          {{ i + 1 }}
+        </div>
       </template>
     </div>
   </div>
@@ -200,7 +216,7 @@
   >
     <div
       v-if="openedZoomId"
-      class="absolute bottom-0 left-0 z-20 h-[95%] w-2/3 border-t-2 border-t-black bg-white"
+      class="absolute bottom-0 left-0 top-[80px] z-20 w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
     >
       <ClientOnly>
         <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
@@ -212,37 +228,47 @@
     v-if="openedPopover"
     :class="[
       { 'rounded-tl-xl': !openedZoomId },
-      'absolute bottom-0 right-0 z-20 h-[95%] w-1/3',
+      'absolute bottom-0 right-0 top-20 z-20 w-[528px]',
     ]"
     @close="closePopover"
   >
     <template v-slot:header>
       <div class="flex flex-col gap-1.5">
         <span class="text-xl text-blue-600"
-          >{{ openedPopover.items.length }} {{ $t("diel v skupine") }}</span
-        >
-        <span class="font-display text-2xl font-medium">{{
+          >{{ openedPopover.items.length }}
+          <template v-if="openedPopover.items.length === 1">
+            {{ $t("dielo v skupine") }}
+          </template>
+          <template
+            v-else-if="
+              openedPopover.items.length > 1 && openedPopover.items.length < 5
+            "
+          >
+            {{ $t("diela v skupine") }}
+          </template>
+          <template v-else>
+            {{ $t("diel v skupine") }}
+          </template>
+        </span>
+        <span class="font-display text-2xl font-bold">{{
           openedPopover.title
         }}</span>
       </div>
     </template>
     <template v-slot:body>
       <div class="flex flex-col gap-5">
-        <div
-          class="font-display text-2xl font-medium"
-          v-html="openedPopover.perex"
-        ></div>
+        <div class="text-2xl font-medium" v-html="openedPopover.perex"></div>
         <div class="flex flex-col gap-3">
           <div
             v-for="(item, i) in openedPopover.items"
-            class="flex items-baseline gap-3"
+            class="flex items-start gap-3"
           >
             <div
               class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
             >
               {{ i + 1 }}
             </div>
-            <div>
+            <div class="leading-normal">
               <span class="font-bold">
                 <template v-if="item.author"> {{ item.author }}: </template>
                 {{ item.title }},</span
@@ -255,44 +281,47 @@
         <div
           class="flex items-center gap-2 rounded-xl bg-black/5 px-4 py-3 text-lg"
         >
-          <Info class="h-4 w-4" />
+          <Info class="h-6 w-6" />
           {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
         </div>
-        <div class="text-xl" v-html="openedPopover.text"></div>
+        <article
+          class="prose-xl leading-8"
+          v-html="openedPopover.text"
+        ></article>
       </div>
     </template>
   </Popover>
 </template>
 <script setup>
-import { watchEffect, watch } from "vue";
+import { watch } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
 
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const loading = ref(false);
-const error = ref(null);
-const sections = ref(null);
 
 const grid = ref();
-const gridScrollPosition = useGridScrollPosition();
+const gridScrollPosition = ref(50);
 const isTouchingGrid = ref(false);
 
+onMounted(() => {
+  changeGridScrollPosition();
+});
 const { locale } = useI18n();
 
-watchEffect(() => {
+const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
   grid.value.scrollTo({
     //TODO: better offset calculation
     left: ((scrollWidth - offsetWidth) / 100) * gridScrollPosition.value,
-    behavior: "smooth",
+    behavior,
   });
-});
+};
 
-const onTouchMove = () => {
-  closePopover();
+const onScroll = () => {
+  if (isTouchingGrid.value) closePopover();
   if (!grid.value) return;
   const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
   gridScrollPosition.value = (scrollLeft / (scrollWidth - offsetWidth)) * 100;
@@ -310,14 +339,19 @@ const openZoomViewer = (e, artwork) => {
   openedZoomId.value = artwork.id;
 };
 
+const onGridSliderChange = (offsetValue) => {
+  gridScrollPosition.value = offsetValue;
+  closePopover();
+  changeGridScrollPosition();
+};
+
 const openGroupPopover = (e, section) => {
   if (e.target instanceof Element) {
-    const { offsetLeft, offsetWidth } = e.target;
-    grid.value.scrollTo({
-      //TODO: better offset calculation
-      left: Math.max(offsetLeft - grid.value.offsetWidth / 4, 0),
-      behavior: "smooth",
-    });
+    const { offsetLeft: targetOffsetLeft } = e.target;
+    const { scrollWidth, offsetWidth } = grid.value;
+    const offsetLeft = Math.max(targetOffsetLeft - offsetWidth / 4, 0);
+    gridScrollPosition.value = (offsetLeft / (scrollWidth - offsetWidth)) * 100;
+    changeGridScrollPosition("smooth");
   }
 
   openedPopover.value = section;
@@ -333,46 +367,50 @@ const closePopover = () => {
 };
 
 const config = useRuntimeConfig();
-
-const fetchData = async () => {
-  const apiUrl = config.public.apiUrl;
-  loading.value = true;
-  try {
-    const { data } = await useFetch(`${apiUrl}/sections`, {
-      headers: {
-        "Accept-Language": locale,
-      },
-    });
-    sections.value = data.value;
-  } catch (err) {
-    error.value = err;
-  } finally {
-    loading.value = false;
-  }
-};
-
-// watch for changes in locale and fetch data again
-watch(locale, () => {
-  fetchData();
+const apiUrl = config.public.apiUrl;
+const {
+  data: sections,
+  error,
+  pending: loading,
+  refresh,
+} = useFetch(`${apiUrl}/sections`, {
+  headers: {
+    "Accept-Language": locale,
+  },
+  watch: [locale],
 });
-
-// fetch data initially
-fetchData();
 
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
   if (!sections.value) return [];
-  return sections.value.data.map((section) => {
-    return {
-      ...section,
-      items: section.items.map((item) => {
-        return {
-          ...item,
-          x: item.x !== null ? item.x + 1 : item.x,
-          y: item.y !== null ? item.y + 1 : item.y,
-        };
-      }),
-    };
-  });
+  return sections.value.data.map((section) => ({
+    ...section,
+    items: section.items.map((item) => ({
+      ...item,
+      x: item.x !== null ? item.x + 1 : item.x,
+      y: item.y !== null ? item.y + 1 : item.y,
+    })),
+  }));
+});
+
+watchEffect(() => {
+  if (!openedPopover.value || !sectionsData.value) return;
+  openedPopover.value = sectionsData.value.find(
+    (section) => openedPopover.value.id === section.id,
+  );
+});
+
+const calculateSquareDimension = () => {
+  const viewportHeight = window.innerHeight;
+  const pxValue = 110;
+  return (viewportHeight - pxValue) / NUM_OF_ROWS;
+};
+
+const translateShadowStyle = computed(() => {
+  return {
+    transform: `translateX(${calculateSquareDimension() / 4}px) translateY(${
+      calculateSquareDimension() / 4
+    }px)`,
+  };
 });
 </script>
