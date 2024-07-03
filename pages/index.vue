@@ -294,7 +294,6 @@
   </Popover>
 </template>
 <script setup>
-import { watch } from "vue";
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
 import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
