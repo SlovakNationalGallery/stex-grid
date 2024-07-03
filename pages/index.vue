@@ -60,7 +60,7 @@
         <GridSlider
           @touch="onGridSliderChange"
           :sliderValue="gridScrollPosition"
-          :maxValue="maxGridScrollValue"
+          :maxValue="MAX_GRID_SCROLL"
         />
         <span
           class="rounded bg-blue-ribbon-600/20 px-1.5 py-1 text-sm text-blue-ribbon-600"
@@ -296,14 +296,13 @@
 <script setup>
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
-import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION } from "../consts";
+import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION, MAX_GRID_SCROLL } from "../consts";
 
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const maxGridScrollValue = 1000;
 
 const grid = ref();
-const gridScrollPosition = ref(maxGridScrollValue / 2);
+const gridScrollPosition = ref(MAX_GRID_SCROLL / 2);
 const isTouchingGrid = ref(false);
 
 onMounted(() => {
@@ -315,7 +314,7 @@ const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
   const maxScrollLeft = scrollWidth - offsetWidth;
-  const scrollLeftPosition = (maxScrollLeft / maxGridScrollValue) * gridScrollPosition.value;
+  const scrollLeftPosition = (maxScrollLeft / MAX_GRID_SCROLL) * gridScrollPosition.value;
 
   grid.value.scrollTo({
     left: scrollLeftPosition,
@@ -328,7 +327,7 @@ const onScroll = () => {
   if (!grid.value) return;
   const { scrollLeft, scrollWidth, offsetWidth } = grid.value;
   gridScrollPosition.value =
-    (scrollLeft / (scrollWidth - offsetWidth)) * maxGridScrollValue;
+    (scrollLeft / (scrollWidth - offsetWidth)) * MAX_GRID_SCROLL;
 };
 
 const onTouchend = () => {
@@ -355,7 +354,7 @@ const openGroupPopover = (e, section) => {
     const { scrollWidth, offsetWidth } = grid.value;
     const offsetLeft = Math.max(targetOffsetLeft - offsetWidth / 4, 0);
     gridScrollPosition.value =
-      (offsetLeft / (scrollWidth - offsetWidth)) * maxGridScrollValue;
+      (offsetLeft / (scrollWidth - offsetWidth)) * MAX_GRID_SCROLL;
     changeGridScrollPosition("smooth");
   }
 
