@@ -46,7 +46,7 @@
     </template>
     <template v-slot:content>
       <div class="flex items-end gap-6">
-        <span class="align-bottom font-display text-[32px] font-bold">{{
+        <span class="align-bottom font-display text-3xl font-bold">{{
           $t("Dizajn v kocke")
         }}</span>
       </div>
@@ -70,7 +70,7 @@
     </template>
   </Navbar>
   <div
-    class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-[100px]"
+    class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-24"
     ref="grid"
     @scroll="onScroll"
     @touchstart="onTouchstart"
