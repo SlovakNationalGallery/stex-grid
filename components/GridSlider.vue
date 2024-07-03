@@ -4,7 +4,7 @@
     <div class="absolute inset-x-0 bg-blue-400 h-1 top-[calc(50%-2px)] bg-blue-ribbon-600/20 rounded-xl"></div>
     <VueSlider
       :min="0"
-      :max="100"
+      :max="props.maxValue"
       @update:modelValue="(value: number) => $emit('touch', value)"
       :modelValue="props.sliderValue"
       :step="1"
@@ -30,5 +30,5 @@
 <script setup lang="ts">
 import MouseScroll from "~/assets/img/mouse-scroll.svg?component";
 import VueSlider from "vue-3-slider-component";
-const props = defineProps(["sliderValue"]);
+const props = defineProps(["sliderValue", "maxValue"]);
 </script>
