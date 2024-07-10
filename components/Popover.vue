@@ -4,7 +4,7 @@
   >
     <div class="flex h-full w-full flex-col">
       <div
-        class="pointer-events-auto flex items-center justify-between gap-4 border-b-2 border-black px-6 py-4"
+        class="pointer-events-auto flex items-start justify-between gap-4 border-b-2 border-black px-6 py-4"
       >
         <slot name="header" />
         <button @click="$emit('close')">
