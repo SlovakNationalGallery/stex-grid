@@ -1,6 +1,9 @@
 <template>
+  <OpacityTransition>
+    <IntroModal v-if="isIntroModalShown" @close="isIntroModalShown = false"/>
+  </OpacityTransition>
   <div
-    v-if="loading"
+    v-if="status === 'pending'"
     class="absolute inset-0 z-30 flex items-center justify-center bg-slate-200/90"
   >
     <svg
@@ -40,7 +43,7 @@
     </div>
   </div>
 
-  <Navbar ref="navbar" class="fixed top-0">
+  <Navbar ref="navbar" class="fixed top-0 bg-white">
     <template v-slot:icon>
       <Logo class="mx-6 h-10 w-10" />
     </template>
@@ -207,14 +210,7 @@
       </template>
     </div>
   </div>
-  <transition
-    enter-active-class="duration-150 ease-out"
-    enter-from-class="transform opacity-0"
-    enter-to-class="opacity-100"
-    leave-active-class="duration-150 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="transform opacity-0"
-  >
+  <OpacityTransition>
     <div
       v-if="openedZoomId"
       class="absolute bottom-0 left-0 top-20 z-20 w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
@@ -223,8 +219,7 @@
         <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
       </ClientOnly>
     </div>
-  </transition>
-
+  </OpacityTransition>
   <Popover
     v-if="openedPopover"
     :class="[
@@ -296,10 +291,19 @@
 <script setup>
 import Logo from "~/assets/img/logo.svg?component";
 import Info from "~/assets/img/info.svg?component";
-import { NUM_OF_COLUMNS, NUM_OF_ROWS, SQUARE_DIMENSION, MAX_GRID_SCROLL } from "../consts";
+import {
+  NUM_OF_COLUMNS,
+  NUM_OF_ROWS,
+  SQUARE_DIMENSION,
+  MAX_GRID_SCROLL,
+} from "../consts";
+import OpacityTransition from "~/components/OpacityTransition.vue";
+import { useIdleTimer } from "~/composables/useIdleTimer";
 
+const { locale } = useI18n();
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
+const isIntroModalShown = ref(false);
 
 const grid = ref();
 const gridScrollPosition = ref(MAX_GRID_SCROLL / 2);
@@ -308,13 +312,13 @@ const isTouchingGrid = ref(false);
 onMounted(() => {
   changeGridScrollPosition();
 });
-const { locale } = useI18n();
 
 const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
   const { scrollWidth, offsetWidth } = grid.value;
   const maxScrollLeft = scrollWidth - offsetWidth;
-  const scrollLeftPosition = (maxScrollLeft / MAX_GRID_SCROLL) * gridScrollPosition.value;
+  const scrollLeftPosition =
+    (maxScrollLeft / MAX_GRID_SCROLL) * gridScrollPosition.value;
 
   grid.value.scrollTo({
     left: scrollLeftPosition,
@@ -348,6 +352,14 @@ const onGridSliderChange = (offsetValue) => {
   changeGridScrollPosition();
 };
 
+const onIdle = () => {
+  openedPopover.value = null;
+  openedZoomId.value = null;
+  gridScrollPosition.value = MAX_GRID_SCROLL / 2;
+  isIntroModalShown.value = true;
+  changeGridScrollPosition();
+};
+
 const openGroupPopover = (e, section) => {
   if (e.target instanceof Element) {
     const { offsetLeft: targetOffsetLeft } = e.target;
@@ -375,7 +387,7 @@ const apiUrl = config.public.apiUrl;
 const {
   data: sections,
   error,
-  pending: loading,
+  status,
   refresh,
 } = useFetch(`${apiUrl}/sections`, {
   headers: {
@@ -383,6 +395,8 @@ const {
   },
   watch: [locale],
 });
+
+useIdleTimer({ callback: onIdle });
 
 // increment all x/y positions +1 to fix issues with grid positioning
 const sectionsData = computed(() => {
