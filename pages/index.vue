@@ -75,6 +75,7 @@
   <div
     class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-24"
     ref="grid"
+    @click="openedPopover.value = null"
     @scroll="onScroll"
     @touchstart="onTouchstart"
     @touchend="onTouchend"
