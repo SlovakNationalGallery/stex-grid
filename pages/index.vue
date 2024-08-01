@@ -1,6 +1,6 @@
 <template>
   <OpacityTransition>
-    <IntroModal v-if="isIntroModalShown" @close="isIntroModalShown = false"/>
+    <IntroModal v-if="isIntroModalShown" @close="isIntroModalShown = false" />
   </OpacityTransition>
   <div
     v-if="status === 'pending'"
@@ -172,8 +172,13 @@
         <!-- artworks -->
         <button
           v-for="item in section.items"
-          :disabled="openedPopover && section.id !== openedPopover.id"
-          class="border-1 group group z-10 box-border border border-black outline outline-1 outline-black disabled:-z-10 disabled:outline-gray-500"
+          :class="[
+            {
+              'border-neutral-400 outline-neutral-400':
+                openedPopover && section.id !== openedPopover.id,
+            },
+            'border-1 group group z-10 box-border border border-black outline outline-1 outline-black',
+          ]"
           :key="item.id"
           :style="{
             gridColumnStart: item.x,
@@ -183,13 +188,19 @@
           }"
           @click="
             (e) =>
-              openedPopover
+              openedPopover?.id === section.id
                 ? openZoomViewer(e, item)
                 : openGroupPopover(e, section)
           "
         >
           <img
-            class="z-20 h-full w-full object-cover group-disabled:brightness-150 group-disabled:contrast-75 group-disabled:saturate-50"
+            :class="[
+              {
+                'border-neutral-400 opacity-30':
+                  openedPopover && section.id !== openedPopover.id,
+              },
+              'z-20 h-full w-full object-cover',
+            ]"
             :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
           />
         </button>
@@ -220,73 +231,81 @@
       </ClientOnly>
     </div>
   </OpacityTransition>
-  <Popover
-    v-if="openedPopover"
-    :class="[
-      { 'rounded-tl-xl': !openedZoomId },
-      'absolute bottom-0 right-0 top-20 z-20 w-[528px]',
-    ]"
-    @close="closePopover"
-  >
-    <template v-slot:header>
-      <div class="flex flex-col gap-1.5">
-        <span class="text-xl text-blue-600"
-          >{{ openedPopover.items.length }}
-          <template v-if="openedPopover.items.length === 1">
-            {{ $t("dielo v skupine") }}
-          </template>
-          <template
-            v-else-if="
-              openedPopover.items.length > 1 && openedPopover.items.length < 5
-            "
-          >
-            {{ $t("diela v skupine") }}
-          </template>
-          <template v-else>
-            {{ $t("diel v skupine") }}
-          </template>
-        </span>
-        <span class="font-display text-2xl font-bold">{{
-          openedPopover.title
-        }}</span>
-      </div>
-    </template>
-    <template v-slot:body>
-      <div class="flex flex-col gap-5">
-        <div class="text-2xl font-medium" v-html="openedPopover.perex"></div>
-        <div class="flex flex-col gap-3">
-          <div
-            v-for="(item, i) in openedPopover.items"
-            class="flex items-start gap-3"
-          >
-            <div
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
-            >
-              {{ i + 1 }}
-            </div>
-            <div class="leading-normal">
-              <span class="font-bold">
-                <template v-if="item.author"> {{ item.author }}: </template>
-                {{ item.title }},</span
+  <SlideTransition>
+    <Popover
+      v-if="openedPopover"
+      :class="[
+        { 'rounded-tl-xl': !openedZoomId },
+        'absolute bottom-0 right-0 top-20 z-20 w-[528px]',
+      ]"
+      @close="closePopover"
+      mode="out-in"
+    >
+      <template v-slot:header>
+        <OpacityTransition mode="out-in">
+          <div :key="openedPopover.id" class="flex flex-col gap-1.5">
+            <span class="text-xl text-blue-600"
+              >{{ openedPopover.items.length }}
+              <template v-if="openedPopover.items.length === 1">
+                {{ $t("dielo v skupine") }}
+              </template>
+              <template
+                v-else-if="
+                  openedPopover.items.length > 1 &&
+                  openedPopover.items.length < 5
+                "
               >
-              {{ item.dating }}, {{ item.medium }}, {{ item.measurement }}
-            </div>
+                {{ $t("diela v skupine") }}
+              </template>
+              <template v-else>
+                {{ $t("diel v skupine") }}
+              </template>
+            </span>
+            <span class="font-display text-2xl font-bold">{{
+              openedPopover.title
+            }}</span>
           </div>
-        </div>
+        </OpacityTransition>
+      </template>
+      <template v-slot:body>
+        <OpacityTransition mode="out-in">
+          <div :key="openedPopover.id" class="flex flex-col gap-5">
+            <div class="text-2xl font-medium" v-html="openedPopover.perex" />
+            <div class="flex flex-col gap-3">
+              <div
+                v-for="(item, i) in openedPopover.items"
+                class="flex items-start gap-3"
+              >
+                <div
+                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
+                >
+                  {{ i + 1 }}
+                </div>
+                <div class="leading-normal">
+                  <span class="font-bold">
+                    <template v-if="item.author"> {{ item.author }}: </template>
+                    {{ item.title }},</span
+                  >
+                  {{ item.dating }}, {{ item.medium }}, {{ item.measurement }}
+                </div>
+              </div>
+            </div>
 
-        <div
-          class="flex items-center gap-2 rounded-xl bg-black/5 px-4 py-3 text-lg"
-        >
-          <Info class="h-6 w-6" />
-          {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
-        </div>
-        <article
-          class="prose-xl leading-8"
-          v-html="openedPopover.text"
-        ></article>
-      </div>
-    </template>
-  </Popover>
+            <div
+              class="flex items-center gap-2 rounded-xl bg-black/5 px-4 py-3 text-lg"
+            >
+              <Info class="h-6 w-6" />
+              {{ $t("Dotkni sa obrázku diela a preskúmaj ho zblízka") }}
+            </div>
+            <article
+              class="prose-xl leading-8"
+              v-html="openedPopover.text"
+            ></article>
+          </div>
+        </OpacityTransition>
+      </template>
+    </Popover>
+  </SlideTransition>
 </template>
 <script setup>
 import Logo from "~/assets/img/logo.svg?component";
@@ -297,13 +316,12 @@ import {
   SQUARE_DIMENSION,
   MAX_GRID_SCROLL,
 } from "../consts";
-import OpacityTransition from "~/components/OpacityTransition.vue";
 import { useIdleTimer } from "~/composables/useIdleTimer";
 
 const { locale } = useI18n();
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const isIntroModalShown = ref(false);
+const isIntroModalShown = ref(true);
 
 const grid = ref();
 const gridScrollPosition = ref(MAX_GRID_SCROLL / 2);
