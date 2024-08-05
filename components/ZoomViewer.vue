@@ -13,7 +13,7 @@
     <Close class="h-10 w-10" />
   </button>
   <div
-    class="absolute right-5 top-1/2 -mt-10 z-20 flex flex-col rounded-xl border-2 border-black bg-white"
+    class="absolute right-5 top-1/2 z-20 -mt-10 flex flex-col rounded-xl border-2 border-black bg-white"
   >
     <button @click="zoomIn" class="h-10 w-10 p-1">
       <MagnifyingGlassPlus class="h-full w-full" />
@@ -22,6 +22,16 @@
       <MagnifyingGlassMinus class="h-full w-full" />
     </button>
   </div>
+  <OpacityTransition mode="out-in">
+    <div
+      :key="item.id"
+      class="absolute inset-x-0 bottom-24 z-20 flex items-center justify-center text-white"
+    >
+      <div class="rounded-xl bg-black/50 px-3 py-2 font-bold">
+        {{ item.title }}
+      </div>
+    </div>
+  </OpacityTransition>
   <slot :selectedZoom="selectedZoom" :selectZoom="selectZoom" />
 </template>
 <script setup>
@@ -34,8 +44,7 @@ const props = defineProps(["item"]);
 const emit = defineEmits(["close"]);
 const viewer = ref();
 const selectedZoom = ref(0);
-const ZoomPerClick = 1.5
- 
+const ZoomPerClick = 1.5;
 
 const selectZoom = (zoomIndex) => (selectedZoom.value = zoomIndex);
 const zoomIn = () => {
