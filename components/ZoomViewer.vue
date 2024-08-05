@@ -10,7 +10,7 @@
     class="absolute right-5 top-4 z-20 rounded-xl border-2 border-black bg-white"
     @click="$emit('close')"
   >
-    <Close class="h-10 w-10" />
+    <Close class="h-10 w-10 rounded-xl border-2 border-black" />
   </button>
   <div
     v-if="viewer"
