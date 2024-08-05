@@ -7,23 +7,46 @@
     />
   </div>
   <button
-    class="absolute right-5 top-4 z-20 rounded-xl bg-white"
+    class="absolute right-5 top-4 z-20 rounded-xl border-2 border-black bg-white"
     @click="$emit('close')"
   >
-    <Close class="h-10 w-10 rounded-xl border-2 border-black" />
+    <Close class="h-10 w-10" />
   </button>
+  <div
+    class="absolute right-5 top-1/2 -mt-10 z-20 flex flex-col rounded-xl border-2 border-black bg-white"
+  >
+    <button @click="zoomIn" class="h-10 w-10 p-1">
+      <MagnifyingGlassPlus class="h-full w-full" />
+    </button>
+    <button @click="zoomOut" class="h-10 w-10 p-1">
+      <MagnifyingGlassMinus class="h-full w-full" />
+    </button>
+  </div>
   <slot :selectedZoom="selectedZoom" :selectZoom="selectZoom" />
 </template>
 <script setup>
 import OpenSeadragon from "openseadragon";
 import Close from "~/assets/img/x-mark.svg?component";
+import MagnifyingGlassPlus from "~/assets/img/magnifying-glass-plus.svg?component";
+import MagnifyingGlassMinus from "~/assets/img/magnifying-glass-minus.svg?component";
 
 const props = defineProps(["item"]);
 const emit = defineEmits(["close"]);
 const viewer = ref();
 const selectedZoom = ref(0);
+const ZoomPerClick = 1.5
+ 
 
 const selectZoom = (zoomIndex) => (selectedZoom.value = zoomIndex);
+const zoomIn = () => {
+  viewer.value.viewport.zoomBy(ZoomPerClick);
+  viewer.value.viewport.applyConstraints();
+};
+const zoomOut = () => {
+  viewer.value.viewport.zoomBy(1 / ZoomPerClick);
+  viewer.value.viewport.applyConstraints();
+};
+
 const loadOpenSeaDragon = () => {
   if (viewer.value?.destroy) {
     viewer.value.destroy();
