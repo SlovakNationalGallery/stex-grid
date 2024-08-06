@@ -1,7 +1,5 @@
 <template>
-  <OpacityTransition>
-    <IntroModal v-if="isIntroModalShown" @close="isIntroModalShown = false" />
-  </OpacityTransition>
+  <!-- Grid -->
   <div
     v-if="status === 'pending'"
     class="absolute inset-0 z-30 flex items-center justify-center bg-slate-200/90"
@@ -75,7 +73,6 @@
   <div
     class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-24"
     ref="grid"
-    @click="openedPopover.value = null"
     @scroll="onScroll"
     @touchstart="onTouchstart"
     @touchend="onTouchend"
@@ -92,7 +89,8 @@
         :key="y"
         class="border-2 border-black"
       >
-        <div
+        <button
+          @click="onClickOutsideGroup"
           v-for="(_, x) in Array.from({ length: NUM_OF_COLUMNS })"
           :key="`${y} ${x}`"
           class="relative"
@@ -109,7 +107,7 @@
           <div
             class="absolute left-3/4 top-3/4 h-1 w-1 rounded-full bg-black opacity-50"
           ></div>
-        </div>
+        </button>
       </template>
       <template v-for="section in sectionsData">
         <!-- drop shadow -->
@@ -159,8 +157,6 @@
                 :style="{
                   width: SQUARE_DIMENSION,
                   height: SQUARE_DIMENSION,
-                  left: SQUARE_DIMENSION * x,
-                  top: SQUARE_DIMENSION * y,
                 }"
                 class="stroke-black stroke-2"
               >
@@ -222,13 +218,98 @@
       </template>
     </div>
   </div>
+  <!-- Modals -->
+  <OpacityTransition>
+    <IntroModal v-if="isIntroModalShown" @close="isIntroModalShown = false" />
+  </OpacityTransition>
   <OpacityTransition>
     <div
-      v-if="openedZoomId"
+      v-if="openedZoomItem && openedPopover"
       class="absolute bottom-0 left-0 top-20 z-20 w-[calc(100vw-528px)] border-t-2 border-t-black bg-white"
     >
       <ClientOnly>
-        <ZoomViewer :id="openedZoomId" @close="closeZoomViewer" />
+        <ZoomViewer
+          :item="openedZoomItem"
+          @close="closeZoomViewer"
+          v-slot="zoomViewerProps"
+        >
+          <div
+            class="absolute w-full bottom-4 z-30 pl-4  overflow-x-auto no-scrollbar"
+          >
+          <div class="w-full flex justify-center gap-2 min-w-max pr-4">
+            <button
+              v-for="(item, itemIndex) in openedPopover.items"
+              @click="openedZoomItem = item"
+              :key="item.id"
+              :class="[
+                'flex shrink-0 items-center gap-2 overflow-hidden rounded-xl border-2 border-black bg-white p-3 transition-all [&>*]:shrink-0',
+              ]"
+            >
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
+              >
+                {{ itemIndex + 1 }}
+              </div>
+              <button
+                :class="[
+                  {
+                    'border-2 border-black !opacity-100':
+                      zoomViewerProps.selectedZoom === 0 &&
+                      item.id === openedZoomItem.id,
+                  },
+                  'h-12 w-12 overflow-hidden rounded-xl opacity-30',
+                ]"
+                @click="zoomViewerProps.selectZoom(0)"
+              >
+                <img
+                  class="h-full w-full object-cover"
+                  v-if="item.images && item.images[0]"
+                  :src="
+                    item.images[0].deep_zoom_url.replace(
+                      /\.dzi$/,
+                      '_files/0/0_0.jpg',
+                    )
+                  "
+                />
+                <img
+                  v-else
+                  class="h-full w-full object-cover"
+                  :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
+                />
+              </button>
+              <div
+                class="flex gap-2 overflow-hidden transition-all duration-300 [&>*]:shrink-0"
+                :style="{
+                  width:
+                    item.id === openedZoomItem.id
+                      ? `${(item.images.length - 1) * 56 - 8}px`
+                      : '0px',
+                }"
+                v-if="item.images"
+              >
+                <button
+                  v-for="(zoom, zoomIndex) in item.images.slice(1)"
+                  @click="zoomViewerProps.selectZoom(zoomIndex + 1)"
+                  :class="[
+                    {
+                      'border-2 border-black !opacity-100':
+                        zoomIndex + 1 === zoomViewerProps.selectedZoom,
+                    },
+                    'h-12 w-12 overflow-hidden rounded-xl opacity-30',
+                  ]"
+                >
+                  <img
+                    :src="
+                      zoom.deep_zoom_url.replace(/\.dzi$/, '_files/0/0_0.jpg')
+                    "
+                    class="h-full w-full object-cover"
+                  />
+                </button>
+              </div>
+            </button>
+          </div>
+          </div>
+        </ZoomViewer>
       </ClientOnly>
     </div>
   </OpacityTransition>
@@ -236,7 +317,7 @@
     <Popover
       v-if="openedPopover"
       :class="[
-        { 'rounded-tl-xl': !openedZoomId },
+        { 'rounded-tl-xl': !openedZoomItem },
         'absolute bottom-0 right-0 top-20 z-20 w-[528px]',
       ]"
       @close="closePopover"
@@ -273,23 +354,24 @@
           <div :key="openedPopover.id" class="flex flex-col gap-5">
             <div class="text-2xl font-medium" v-html="openedPopover.perex" />
             <div class="flex flex-col gap-3">
-              <div
+              <button
                 v-for="(item, i) in openedPopover.items"
                 class="flex items-start gap-3"
+                @click="openedZoomItem = item"
               >
                 <div
                   class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
                 >
                   {{ i + 1 }}
                 </div>
-                <div class="leading-normal">
+                <div class="text-left leading-normal">
                   <span class="font-bold">
                     <template v-if="item.author"> {{ item.author }}: </template>
                     {{ item.title }},</span
                   >
                   {{ item.dating }}, {{ item.medium }}, {{ item.measurement }}
                 </div>
-              </div>
+              </button>
             </div>
 
             <div
@@ -321,7 +403,7 @@ import { useIdleTimer } from "~/composables/useIdleTimer";
 
 const { locale } = useI18n();
 const openedPopover = ref(null);
-const openedZoomId = ref(null);
+const openedZoomItem = ref(null);
 const isIntroModalShown = ref(true);
 
 const grid = ref();
@@ -331,6 +413,10 @@ const isTouchingGrid = ref(false);
 onMounted(() => {
   changeGridScrollPosition();
 });
+
+const onClickOutsideGroup = () => {
+  openedPopover.value = null;
+};
 
 const changeGridScrollPosition = (behavior) => {
   if (!grid.value || isTouchingGrid.value) return;
@@ -362,7 +448,7 @@ const onTouchstart = () => {
 };
 
 const openZoomViewer = (e, artwork) => {
-  openedZoomId.value = artwork.id;
+  openedZoomItem.value = artwork;
 };
 
 const onGridSliderChange = (offsetValue) => {
@@ -373,7 +459,7 @@ const onGridSliderChange = (offsetValue) => {
 
 const onIdle = () => {
   openedPopover.value = null;
-  openedZoomId.value = null;
+  openedZoomItem.value = null;
   gridScrollPosition.value = MAX_GRID_SCROLL / 2;
   isIntroModalShown.value = true;
   changeGridScrollPosition();
@@ -393,12 +479,12 @@ const openGroupPopover = (e, section) => {
 };
 
 const closeZoomViewer = () => {
-  openedZoomId.value = null;
+  openedZoomItem.value = null;
 };
 
 const closePopover = () => {
   openedPopover.value = null;
-  openedZoomId.value = null;
+  openedZoomItem.value = null;
 };
 
 const config = useRuntimeConfig();
