@@ -25,13 +25,13 @@
   </div>
   <div
     :key="item.id"
-    class="absolute inset-x-0 bottom-24 z-20 flex items-center justify-center text-white"
+    class="absolute inset-x-0 bottom-24 m-1 z-20 flex items-center justify-center text-white"
   >
     <div class="rounded-xl bg-black/50 px-3 py-2 font-bold">
       {{ item.title }}
     </div>
   </div>
-  <slot :selectedZoom="selectedZoom" :selectZoom="selectZoom" />
+    <slot :selectedZoom="selectedZoom" :selectZoom="selectZoom" />
 </template>
 <script setup>
 import OpenSeadragon from "openseadragon";
