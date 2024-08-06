@@ -39,10 +39,16 @@
         </button>
       </div>
       <div class="flex flex-col items-center gap-10">
-        <img
-          src="assets/img/tutorial_modal.png"
-          class="border-2 border-black rounded-2xl"
-        />
+        <video
+          loop
+          autoplay
+          width="934p"
+          height="527"
+          class="rounded-2xl border-2 border-black"
+        >
+          <source src="assets/videos/kocka_loop.mp4" type="video/mp4" />
+        </video>
+
         <span
           class="text-lg"
           v-html="

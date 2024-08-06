@@ -303,7 +303,7 @@ import { useIdleTimer } from "~/composables/useIdleTimer";
 const { locale } = useI18n();
 const openedPopover = ref(null);
 const openedZoomId = ref(null);
-const isIntroModalShown = ref(false);
+const isIntroModalShown = ref(true);
 
 const grid = ref();
 const gridScrollPosition = ref(MAX_GRID_SCROLL / 2);
