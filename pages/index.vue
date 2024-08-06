@@ -234,8 +234,9 @@
           v-slot="zoomViewerProps"
         >
           <div
-            class="absolute bottom-4 z-20 flex w-full justify-center gap-2 overflow-auto px-4"
+            class="absolute w-full bottom-4 z-30 pl-4  overflow-x-auto no-scrollbar"
           >
+          <div class="w-full flex justify-center gap-2 min-w-max pr-4">
             <button
               v-for="(item, itemIndex) in openedPopover.items"
               @click="openedZoomItem = item"
@@ -256,7 +257,7 @@
                       zoomViewerProps.selectedZoom === 0 &&
                       item.id === openedZoomItem.id,
                   },
-                  'h-12 w-12 overflow-hidden rounded-xl opacity-60',
+                  'h-12 w-12 overflow-hidden rounded-xl opacity-30',
                 ]"
                 @click="zoomViewerProps.selectZoom(0)"
               >
@@ -294,7 +295,7 @@
                       'border-2 border-black !opacity-100':
                         zoomIndex + 1 === zoomViewerProps.selectedZoom,
                     },
-                    'h-12 w-12 overflow-hidden rounded-xl opacity-60',
+                    'h-12 w-12 overflow-hidden rounded-xl opacity-30',
                   ]"
                 >
                   <img
@@ -306,6 +307,7 @@
                 </button>
               </div>
             </button>
+          </div>
           </div>
         </ZoomViewer>
       </ClientOnly>
