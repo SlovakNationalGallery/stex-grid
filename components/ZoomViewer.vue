@@ -13,6 +13,7 @@
     <Close class="h-10 w-10" />
   </button>
   <div
+    v-if="viewer"
     class="absolute right-5 top-1/2 z-20 -mt-10 flex flex-col rounded-xl border-2 border-black bg-white"
   >
     <button @click="zoomIn" class="h-10 w-10 p-1">
@@ -22,16 +23,14 @@
       <MagnifyingGlassMinus class="h-full w-full" />
     </button>
   </div>
-  <OpacityTransition mode="out-in">
-    <div
-      :key="item.id"
-      class="absolute inset-x-0 bottom-24 z-20 flex items-center justify-center text-white"
-    >
-      <div class="rounded-xl bg-black/50 px-3 py-2 font-bold">
-        {{ item.title }}
-      </div>
+  <div
+    :key="item.id"
+    class="absolute inset-x-0 bottom-24 z-20 flex items-center justify-center text-white"
+  >
+    <div class="rounded-xl bg-black/50 px-3 py-2 font-bold">
+      {{ item.title }}
     </div>
-  </OpacityTransition>
+  </div>
   <slot :selectedZoom="selectedZoom" :selectZoom="selectZoom" />
 </template>
 <script setup>
@@ -47,10 +46,12 @@ const selectedZoom = ref(0);
 const ZoomPerClick = 1.5;
 
 const selectZoom = (zoomIndex) => (selectedZoom.value = zoomIndex);
+
 const zoomIn = () => {
   viewer.value.viewport.zoomBy(ZoomPerClick);
   viewer.value.viewport.applyConstraints();
 };
+
 const zoomOut = () => {
   viewer.value.viewport.zoomBy(1 / ZoomPerClick);
   viewer.value.viewport.applyConstraints();
@@ -62,11 +63,11 @@ const loadOpenSeaDragon = () => {
   }
 
   viewer.value = null;
-  if (!props.item?.images[selectedZoom.value]) return;
+  if (!props.item?.images.length) return;
 
   viewer.value = OpenSeadragon({
     id: "viewer",
-    tileSources: props.item.images[selectedZoom.value].deep_zoom_url,
+    tileSources: props.item.images.map((image) => image.deep_zoom_url),
     showNavigationControl: false,
     showNavigator: false,
   });
@@ -82,10 +83,12 @@ watch(
   },
 );
 
-watch(selectedZoom, loadOpenSeaDragon);
+watch(selectedZoom, () => {
+  viewer.value.goToPage(selectedZoom.value);
+});
 
 onUnmounted(() => {
-  if (viewer.value) {
+  if (viewer.value?.destroy) {
     viewer.value.destroy();
   }
 });
