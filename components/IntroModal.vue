@@ -49,7 +49,7 @@
       </p>
       <button
         @click="$emit('close')"
-        class="flex justify-center overflow-y-scroll rounded-xl bg-blue-ribbon-600 px-4 py-3 text-lg font-medium"
+        class="flex justify-center rounded-xl bg-blue-ribbon-600 px-4 py-3 text-lg font-medium"
       >
         {{ $t("Pokračovať") }}
       </button>
