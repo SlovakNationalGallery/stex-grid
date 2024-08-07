@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { LocaleObject } from "@nuxtjs/i18n/dist/runtime/composables";
-
-const { locale, locales, setLocale } = useI18n();
+const { locale, setLocale } = useI18n();
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <template>
-  <Navbar ref="navbar" class="fixed top-0 border-t-3">
+  <Navbar ref="navbar" class="fixed top-0 border-t-3 bg-white">
     <template v-slot:icon class="w-20">
       <div class="flex h-full w-20 items-center justify-center bg-black">
         <Logo class="h-12 w-12" />
