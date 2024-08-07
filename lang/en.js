@@ -7,4 +7,5 @@ export default {
   "diela v skupine": "objects in group",
   "diel v skupine": "objects in group",
   "Dotkni sa obrázku diela a preskúmaj ho zblízka": "Touch a picture of an object to examine it up close",
+  "Pokračovať": "Continue"
 };

@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="fixed z-40 h-screen w-screen bg-black/80 text-white backdrop-blur"
-  >
+  <div class="fixed z-40 h-screen w-screen bg-black text-white backdrop-blur">
     <Navbar>
       <template v-slot:icon class="w-20">
         <div class="flex h-full w-20 items-center justify-center">
@@ -16,7 +14,47 @@
         </div>
       </template>
     </Navbar>
-    <div class="flex h-full w-full items-center justify-center gap-16 pb-5">
+    <div
+      class="h-[calc(100vh-175px)] w-full max-w-screen-lg justify-center gap-16 overflow-y-scroll px-20 py-20 pb-5 text-white"
+    >
+      <h1 class="pb-4 text-4xl">
+        Vyjadrenie k odvolaniu Alexandry Kusej, generálnej riaditeľky SNG
+      </h1>
+      <h2 class="pb-4 text-2xl">
+        Generálna riaditeľka Slovenskej národnej galérie Alexandra Kusá prevzala
+        odvolací dekrét, ktorý jej bol doručený z Ministerstva kultúry SR dnes
+        7. augusta 2024. Kolektív zamestnancov a zamestnankýň SNG stojí za
+        Alexandrou Kusou, pretože si uvedomuje, koľko úsilia, času, odbornosti,
+        ľudskosti, inovatívnych vízií a nápadov a niekedy až nadľudských výkonov
+        venovala budovaniu národnej kultúrnej inštitúcie, ktorá pozná reálny
+        význam a hodnotu slov „národná“, „kultúra“ a „inštitúcia“.
+      </h2>
+      <p class="pb-4 text-lg">
+        Za vyše 20 rokov, počas ktorých doteraz pôsobila v SNG ako kurátorka a
+        od roku 2010 ako generálna riaditeľka, spolu so svojím tímom odviedla
+        množstvo práce, ktorej reálne výsledky zasahujú kultúrnu sféru nielen na
+        celom Slovensku, ale sú nadmieru vnímané a oceňované aj v medzinárodnom
+        kontexte. Pevne veríme, že všetky tieto hodnoty a pozitíva vníma nielen
+        kolektív SNG, ale aj mnoho ľudí z rôznych odvetví na Slovensku a v
+        zahraničí. Preto dúfame, že ďalšie z bezdôvodných odvolaní kľúčových
+        osobností vrcholových umeleckých inštitúcií, úspešných manažérov a
+        rešpektovaných odborníkov neostane bez odozvy. Kultúra nie je len o
+        výstavách, divadelných predstaveniach či koncertoch, je to najmä nástroj
+        a priestor, v ktorom sa dokáže celá spoločnosť posúvať vpred.
+      </p>
+      <p class="pb-6 text-lg">
+        Oddnes do nedele môžete navštíviť SNG v Bratislave, Zvolenský zámok a
+        Kaštieľ Strážky v Spišskej Belej zadarmo. Nájdete u nás dôkaz našej
+        práce a veľa zaujímavého!
+      </p>
+      <button
+        @click="$emit('close')"
+        class="flex justify-center overflow-y-scroll rounded-xl bg-blue-ribbon-600 px-4 py-3 text-lg font-medium"
+      >
+        {{ $t("Pokračovať") }}
+      </button>
+    </div>
+    <!-- <div class="flex h-full w-full items-center justify-center gap-16 pb-5">
       <div class="flex w-80 flex-col gap-9">
         <span class="font-display text-5xl font-medium">
           {{ $t("Čo spája diela v expozícii?") }}
@@ -58,7 +96,7 @@
           "
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup lang="ts">
