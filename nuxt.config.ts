@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     detectBrowserLanguage: false,
     strategy: "no_prefix",
     langDir: 'lang/',
+    compilation: { strictMessage: false}
   },
 
   devtools: { enabled: true },
