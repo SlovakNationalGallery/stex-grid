@@ -69,6 +69,11 @@
         >
       </div>
     </template>
+    <template v-slot:aside>
+      <button @click="isIntroModalShown = true">
+        <Info class="w-10 h-10 stroke-3"/>
+      </button>
+    </template>
   </Navbar>
   <div
     class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-24"

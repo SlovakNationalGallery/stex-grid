@@ -4,10 +4,10 @@ const { locale, setLocale } = useI18n();
 
 <template>
   <div>
-    <button @click="setLocale('sk')" :class="[{ 'font-bold': locale === 'sk' }]">
+    <button @click="setLocale('sk')" :class="['pt-2', { 'font-bold': locale === 'sk' }]">
       SK
     </button>
-    <button @click="setLocale('en')" :class="[{ 'font-bold': locale === 'en' }]">
+    <button @click="setLocale('en')" :class="['pt-2', { 'font-bold': locale === 'en' }]">
       EN
     </button>
   </div>
