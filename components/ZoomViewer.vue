@@ -7,14 +7,14 @@
     />
   </div>
   <button
-    class="absolute right-5 top-5 p-0.5 z-20 rounded-xl border-2 border-black bg-white"
+    class="absolute right-4 top-4 p-0.5 z-20 rounded-xl border-2 border-black bg-white"
     @click="$emit('close')"
   >
     <Close class="h-10 w-10" />
   </button>
   <div
     v-if="viewer"
-    class="absolute right-5 top-1/2 z-20 -mt-10 flex flex-col gap-4"
+    class="absolute right-4 top-1/2 z-20 -mt-10 flex flex-col gap-4"
   >
     <button @click="zoomIn" class="p-1.5 rounded-xl border-2 border-black bg-white">
       <MagnifyingGlassPlus class="h-8 w-8" />
