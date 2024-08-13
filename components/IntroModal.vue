@@ -19,36 +19,39 @@
     >
       <article class="max-h-[70vh] max-w-screen-md overflow-y-auto pr-10">
         <h1 class="pb-4 text-4xl">
-          Vyjadrenie k odvolaniu Alexandry Kusej, generálnej riaditeľky SNG
+          {{
+            $t(
+              "Vyjadrenie k odvolaniu Alexandry Kusej, generálnej riaditeľky SNG",
+            )
+          }}
         </h1>
         <h2 class="pb-4 text-2xl">
-          Generálna riaditeľka Slovenskej národnej galérie Alexandra Kusá
-          prevzala odvolací dekrét, ktorý jej bol doručený z Ministerstva
-          kultúry SR dnes 7. augusta 2024. Kolektív zamestnancov a zamestnankýň
-          SNG stojí za Alexandrou Kusou, pretože si uvedomuje, koľko úsilia,
-          času, odbornosti, ľudskosti, inovatívnych vízií a nápadov a niekedy až
-          nadľudských výkonov venovala budovaniu národnej kultúrnej inštitúcie,
-          ktorá pozná reálny význam a hodnotu slov „národná“, „kultúra“ a
-          „inštitúcia“.
+          {{
+            $t(
+              "Generálna riaditeľka Slovenskej národnej galérie Alexandra Kusá prevzala odvolací dekrét, ktorý jej bol doručený z Ministerstva kultúry SR dnes 7. augusta 2024. Kolektív zamestnancov a zamestnankýň SNG stojí za Alexandrou Kusou, pretože si uvedomuje, koľko úsilia, času, odbornosti, ľudskosti, inovatívnych vízií a nápadov a niekedy až nadľudských výkonov venovala budovaniu národnej kultúrnej inštitúcie, ktorá pozná reálny význam a hodnotu slov „národná“, „kultúra“ a „inštitúcia“.",
+            )
+          }}
         </h2>
         <p class="pb-4 text-lg">
-          Za vyše 20 rokov, počas ktorých doteraz pôsobila v SNG ako kurátorka a
-          od roku 2010 ako generálna riaditeľka, spolu so svojím tímom odviedla
-          množstvo práce, ktorej reálne výsledky zasahujú kultúrnu sféru nielen
-          na celom Slovensku, ale sú nadmieru vnímané a oceňované aj v
-          medzinárodnom kontexte. Pevne veríme, že všetky tieto hodnoty a
-          pozitíva vníma nielen kolektív SNG, ale aj mnoho ľudí z rôznych
-          odvetví na Slovensku a v zahraničí. Preto dúfame, že ďalšie z
-          bezdôvodných odvolaní kľúčových osobností vrcholových umeleckých
-          inštitúcií, úspešných manažérov a rešpektovaných odborníkov neostane
-          bez odozvy. Kultúra nie je len o výstavách, divadelných predstaveniach
-          či koncertoch, je to najmä nástroj a priestor, v ktorom sa dokáže celá
-          spoločnosť posúvať vpred.
+          {{
+            $t(
+              "Za vyše 20 rokov, počas ktorých doteraz pôsobila v SNG ako kurátorka a od roku 2010 ako generálna riaditeľka, spolu so svojím tímom odviedla množstvo práce, ktorej reálne výsledky zasahujú kultúrnu sféru nielen na celom Slovensku, ale sú nadmieru vnímané a oceňované aj v medzinárodnom kontexte.",
+            )
+          }}
         </p>
         <p class="pb-6 text-lg">
-          Oddnes do nedele môžete navštíviť SNG v Bratislave, Zvolenský zámok a
-          Kaštieľ Strážky v Spišskej Belej zadarmo. Nájdete u nás dôkaz našej
-          práce a veľa zaujímavého!
+          {{
+            $t(
+              "Oddnes do nedele môžete navštíviť SNG v Bratislave, Zvolenský zámok a Kaštieľ Strážky v Spišskej Belej zadarmo. Nájdete u nás dôkaz našej práce a veľa zaujímavého!",
+            )
+          }}
+        </p>
+        <p class="pb-6 text-lg font-bold">
+          {{
+            $t(
+              "AKTUALIZÁCIA: V zmysle rozhodnutia povereného generálneho riaditeľa Ing. Antona Bittnera, PhD., MBA. je ku dňu 8. 8. 2024 zrušené voľné vstupné.",
+            )
+          }}
         </p>
       </article>
       <button
