@@ -116,9 +116,9 @@
       </template>
       <template v-for="section in sectionsData">
         <!-- drop shadow -->
-        <template v-for="item in section.items">
+        <template v-for="item in section.items" :key="item.id" >
           <div
-            v-if="
+            v-show="
               !openedPopover ||
               (openedPopover && section.id === openedPopover?.id)
             "
@@ -129,7 +129,6 @@
             }
           transition-all pointer-events-none
           `"
-            :key="item.id"
             :style="{
               gridColumnStart: item.x,
               gridRowStart: item.y,
@@ -142,7 +141,7 @@
         <!-- tiny legs under artworks -->
         <div
           v-for="item in section.items"
-          v-if="!openedPopover"
+          v-show="!openedPopover"
           :key="item.id + ' legs'"
           class="flex flex-col pointer-events-none"
           :style="{
