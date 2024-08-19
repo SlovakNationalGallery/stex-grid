@@ -1,5 +1,5 @@
 export const useIdleTimer = ({ callback }) => {
-  const IDLE_TIMEOUT = 120000; // 1 minute
+  const IDLE_TIMEOUT = 120000; // 2 minutes
   const idleTimer = ref(null);
 
   onMounted(() => {
