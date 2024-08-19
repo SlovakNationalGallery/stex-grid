@@ -35,6 +35,9 @@ export default {
       borderRadius: {
         "4xl": "32px",
       },
+      strokeWidth: {
+        3: "3px",
+      }
     },
   },
   plugins: [

@@ -69,6 +69,11 @@
         >
       </div>
     </template>
+    <template v-slot:aside>
+      <button @click="isIntroModalShown = true">
+        <Info class="w-10 h-10 stroke-3"/>
+      </button>
+    </template>
   </Navbar>
   <div
     class="no-scrollbar max-h-screen w-screen overflow-y-hidden overflow-x-scroll overscroll-contain pb-5 pt-24"
@@ -234,80 +239,80 @@
           v-slot="zoomViewerProps"
         >
           <div
-            class="absolute w-full bottom-4 z-30 pl-4  overflow-x-auto no-scrollbar"
+            class="no-scrollbar absolute bottom-4 z-30 w-full overflow-x-auto pl-4"
           >
-          <div class="w-full flex justify-center gap-2 min-w-max pr-4">
-            <button
-              v-for="(item, itemIndex) in openedPopover.items"
-              @click="openedZoomItem = item"
-              :key="item.id"
-              :class="[
-                'flex shrink-0 items-center gap-2 overflow-hidden rounded-xl border-2 border-black bg-white p-3 transition-all [&>*]:shrink-0',
-              ]"
-            >
-              <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
-              >
-                {{ itemIndex + 1 }}
-              </div>
+            <div class="flex w-full min-w-max justify-center gap-2 pr-4">
               <button
+                v-for="(item, itemIndex) in openedPopover.items"
+                @click="openedZoomItem = item"
+                :key="item.id"
                 :class="[
-                  {
-                    'border-2 border-black !opacity-100':
-                      zoomViewerProps.selectedZoom === 0 &&
-                      item.id === openedZoomItem.id,
-                  },
-                  'h-12 w-12 overflow-hidden rounded-xl opacity-30',
+                  'flex shrink-0 items-center gap-2 overflow-hidden rounded-xl border-2 border-black bg-white p-3 transition-all [&>*]:shrink-0',
                 ]"
-                @click="zoomViewerProps.selectZoom(0)"
               >
-                <img
-                  class="h-full w-full object-cover"
-                  v-if="item.images && item.images[0]"
-                  :src="
-                    item.images[0].deep_zoom_url.replace(
-                      /\.dzi$/,
-                      '_files/0/0_0.jpg',
-                    )
-                  "
-                />
-                <img
-                  v-else
-                  class="h-full w-full object-cover"
-                  :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
-                />
-              </button>
-              <div
-                class="flex gap-2 overflow-hidden transition-all duration-300 [&>*]:shrink-0"
-                :style="{
-                  width:
-                    item.id === openedZoomItem.id
-                      ? `${(item.images.length - 1) * 56 - 8}px`
-                      : '0px',
-                }"
-                v-if="item.images"
-              >
+                <div
+                  class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-ribbon-600 text-white"
+                >
+                  {{ itemIndex + 1 }}
+                </div>
                 <button
-                  v-for="(zoom, zoomIndex) in item.images.slice(1)"
-                  @click="zoomViewerProps.selectZoom(zoomIndex + 1)"
                   :class="[
                     {
                       'border-2 border-black !opacity-100':
-                        zoomIndex + 1 === zoomViewerProps.selectedZoom,
+                        zoomViewerProps.selectedZoom === 0 &&
+                        item.id === openedZoomItem.id,
                     },
                     'h-12 w-12 overflow-hidden rounded-xl opacity-30',
                   ]"
+                  @click="zoomViewerProps.selectZoom(0)"
                 >
                   <img
-                    :src="
-                      zoom.deep_zoom_url.replace(/\.dzi$/, '_files/0/0_0.jpg')
-                    "
                     class="h-full w-full object-cover"
+                    v-if="item.images && item.images[0]"
+                    :src="
+                      item.images[0].deep_zoom_url.replace(
+                        /\.dzi$/,
+                        '_files/0/0_0.jpg',
+                      )
+                    "
+                  />
+                  <img
+                    v-else
+                    class="h-full w-full object-cover"
+                    :src="`https://www.webumenia.sk/dielo/nahlad/${item.id}/600`"
                   />
                 </button>
-              </div>
-            </button>
-          </div>
+                <div
+                  class="flex gap-2 overflow-hidden transition-all duration-300 [&>*]:shrink-0"
+                  :style="{
+                    width:
+                      item.id === openedZoomItem.id
+                        ? `${(item.images.length - 1) * 56 - 8}px`
+                        : '0px',
+                  }"
+                  v-if="item.images"
+                >
+                  <button
+                    v-for="(zoom, zoomIndex) in item.images.slice(1)"
+                    @click="zoomViewerProps.selectZoom(zoomIndex + 1)"
+                    :class="[
+                      {
+                        'border-2 border-black !opacity-100':
+                          zoomIndex + 1 === zoomViewerProps.selectedZoom,
+                      },
+                      'h-12 w-12 overflow-hidden rounded-xl opacity-30',
+                    ]"
+                  >
+                    <img
+                      :src="
+                        zoom.deep_zoom_url.replace(/\.dzi$/, '_files/0/0_0.jpg')
+                      "
+                      class="h-full w-full object-cover"
+                    />
+                  </button>
+                </div>
+              </button>
+            </div>
           </div>
         </ZoomViewer>
       </ClientOnly>

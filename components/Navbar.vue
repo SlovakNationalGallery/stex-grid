@@ -5,6 +5,9 @@
       <slot name="content" />
     </div>
     <slot name="center" />
-    <LanguageSwitcher class="flex gap-5 pr-6 font-display text-3xl" />
+    <div class="flex gap-5">
+      <slot name="aside"></slot>
+      <LanguageSwitcher class="flex gap-5 pr-6 font-display text-3xl" />
+    </div>
   </div>
 </template>

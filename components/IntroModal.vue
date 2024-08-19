@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed z-40 h-screen w-screen bg-black/80 text-white backdrop-blur"
+    class="fixed z-40 top-0 h-screen w-screen bg-black/80 text-white backdrop-blur"
   >
     <Navbar>
       <template v-slot:icon class="w-20">
