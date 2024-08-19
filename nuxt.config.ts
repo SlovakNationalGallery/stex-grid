@@ -4,9 +4,11 @@ import svgLoader from 'vite-svg-loader'
 export default defineNuxtConfig({
   modules: ["@nuxtjs/i18n"],
   ssr: false,
+
   vite: {
     plugins: [svgLoader({})]
   },
+
   i18n: {
     locales: [
       { "code": "sk", "iso": "sk-SK", "file": "sk.js" },
@@ -16,24 +18,31 @@ export default defineNuxtConfig({
     detectBrowserLanguage: false,
     strategy: "no_prefix",
     langDir: 'lang/',
+    compilation: { strictMessage: false}
   },
+
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
+
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_API_URL,
     },
   },
+
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL,
     head: {
       meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" }],
     },
   },
+
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
     },
   },
+
+  compatibilityDate: "2024-07-22",
 });
