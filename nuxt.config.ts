@@ -2,9 +2,11 @@
 import svgLoader from 'vite-svg-loader'
 
 export default defineNuxtConfig({
-  modules: ["@nuxtjs/i18n"],
+  modules: ["@nuxtjs/i18n", "@zadigetvoltaire/nuxt-gtm"],
   ssr: false,
-
+  gtm: {
+    id: "GTM-546MRMLN",
+  },
   vite: {
     plugins: [svgLoader({})]
   },
