@@ -1,26 +1,23 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import svgLoader from 'vite-svg-loader'
+import svgLoader from "vite-svg-loader";
 
 export default defineNuxtConfig({
   modules: ["@nuxtjs/i18n", "@zadigetvoltaire/nuxt-gtm"],
   ssr: false,
-  gtm: {
-    id: "GTM-546MRMLN",
-  },
   vite: {
-    plugins: [svgLoader({})]
+    plugins: [svgLoader({})],
   },
 
   i18n: {
     locales: [
-      { "code": "sk", "iso": "sk-SK", "file": "sk.js" },
-      { "code": "en", "iso": "en-EN", "file": "en.js" },
+      { code: "sk", iso: "sk-SK", file: "sk.js" },
+      { code: "en", iso: "en-EN", file: "en.js" },
     ],
     defaultLocale: "sk",
     detectBrowserLanguage: false,
     strategy: "no_prefix",
-    langDir: 'lang/',
-    compilation: { strictMessage: false}
+    langDir: "lang/",
+    compilation: { strictMessage: false },
   },
 
   devtools: { enabled: true },
@@ -32,10 +29,24 @@ export default defineNuxtConfig({
     },
   },
 
+  gtm: {
+    id: "GTM-546MRMLN",
+    enabled: true, // Enable GTM tracking
+    debug: true, // Enable this for debugging (set to false in production)
+    loadScript: true,
+  },
+
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL,
     head: {
-      meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" }],
+      meta: [
+        { charset: "utf-8" },
+        {
+          name: "viewport",
+          content:
+            "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
+        },
+      ],
     },
   },
 
