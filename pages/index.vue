@@ -71,7 +71,7 @@
     </template>
     <template v-slot:aside>
       <button @click="isIntroModalShown = true">
-        <Info class="w-10 h-10 stroke-3"/>
+        <Info class="stroke-3 h-10 w-10" />
       </button>
     </template>
   </Navbar>
@@ -116,9 +116,9 @@
       </template>
       <template v-for="section in sectionsData">
         <!-- drop shadow -->
-        <template v-for="item in section.items">
+        <template v-for="item in section.items" :key="item.id" >
           <div
-            v-if="
+            v-show="
               !openedPopover ||
               (openedPopover && section.id === openedPopover?.id)
             "
@@ -127,9 +127,8 @@
                 ? 'bg-blue-ribbon-600 blur'
                 : 'bg-blue-ribbon-600/20'
             }
-          transition-all
+          transition-all pointer-events-none
           `"
-            :key="item.id"
             :style="{
               gridColumnStart: item.x,
               gridRowStart: item.y,
@@ -142,8 +141,9 @@
         <!-- tiny legs under artworks -->
         <div
           v-for="item in section.items"
+          v-show="!openedPopover"
           :key="item.id + ' legs'"
-          :class="[{ 'opacity-0': openedPopover }, 'flex flex-col']"
+          class="flex flex-col pointer-events-none"
           :style="{
             gridColumnStart: item.x,
             gridRowStart: item.y,
@@ -258,11 +258,16 @@
                 <button
                   :class="[
                     {
-                      'border-2 border-black !opacity-100':
+                      'border-2 border-black':
                         zoomViewerProps.selectedZoom === 0 &&
                         item.id === openedZoomItem.id,
                     },
-                    'h-12 w-12 overflow-hidden rounded-xl opacity-30',
+                    {
+                      '!opacity-30':
+                        zoomViewerProps.selectedZoom !== 0 &&
+                        item.id === openedZoomItem.id,
+                    },
+                    'h-12 w-12 overflow-hidden rounded-xl opacity-100',
                   ]"
                   @click="zoomViewerProps.selectZoom(0)"
                 >

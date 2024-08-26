@@ -42,7 +42,9 @@
         <video
           loop
           autoplay
-          width="934p"
+          width="934"
+          preload="auto"
+          muted
           height="527"
           class="rounded-2xl border-2 border-black"
         >
