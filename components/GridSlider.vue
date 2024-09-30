@@ -6,7 +6,7 @@
       :min="0"
       :max="props.maxValue"
       @update:modelValue="(value: number) => $emit('touch', value)"
-      :modelValue="props.sliderValue"
+      :modelValue="props.sliderValue > props.maxValue ? props.maxValue : props.sliderValue"
       :step="1"
       :drag-on-click="true"
       class="mx-16"
