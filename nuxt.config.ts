@@ -28,12 +28,9 @@ export default defineNuxtConfig({
       apiUrl: process.env.NUXT_API_URL,
     },
   },
-
   gtm: {
-    id: "GTM-546MRMLN",
+    id: process.env.NUXT_APP_GTM_ID || '',
     enabled: true, // Enable GTM tracking
-    debug: true, // Enable this for debugging (set to false in production)
-    loadScript: true,
   },
 
   app: {
