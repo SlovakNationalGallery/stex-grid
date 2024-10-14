@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   },
   gtm: {
     id: process.env.NUXT_APP_GTM_ID || '',
-    enabled: true, // Enable GTM tracking
+    enabled: process.env.NUXT_APP_GTM_ID === 'true' ? true : false, // Enable GTM tracking
   },
 
   app: {
