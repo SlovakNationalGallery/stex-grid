@@ -2,7 +2,7 @@
 import svgLoader from 'vite-svg-loader'
 
 export default defineNuxtConfig({
-  modules: ["@nuxtjs/i18n"],
+  modules: ["@nuxtjs/i18n", "@nuxt/scripts"],
   ssr: false,
 
   vite: {
@@ -24,9 +24,21 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/assets/css/main.css"],
 
+  scripts: {
+    registry: {
+      googleTagManager: true,
+    }
+  },
+  // you need to provide a runtime config to access the environment variables
+
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_API_URL,
+      scripts: {
+        googleTagManager: {
+          id: process.env.NUXT_APP_GTM_ID, 
+        },
+      }
     },
   },
 
